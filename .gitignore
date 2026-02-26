@@ -1,0 +1,40 @@
+# --- General ---
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log
+pnpm-debug.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+.pnpm-lock.yaml
+
+# Backend
+backend/.env
+backend/.env.*
+!backend/.env.template
+!backend/.env.example
+
+# --- Backend (NestJS / Node) ---
+# Build
+dist/
+backend/dist/
+coverage/
+backend/coverage/
+backend/postgres/
+
+# Database specific
+postgres-data/
+backend/postgres-data/
+
+# --- IDE / Editor ---
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
