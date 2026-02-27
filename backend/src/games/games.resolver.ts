@@ -1,35 +1,39 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
-import { CreateGameInput } from './dto/create-game.input';
-import { UpdateGameInput } from './dto/update-game.input';
+import { CreateGameInput, UpdateGameInput } from './dto/inputs';
 
 @Resolver(() => Game)
 export class GamesResolver {
-  constructor(private readonly gamesService: GamesService) {}
+  constructor(private readonly gamesService: GamesService) { }
 
   @Mutation(() => Game)
-  createGame(@Args('createGameInput') createGameInput: CreateGameInput) {
+  async createGame(@Args('createGameInput') createGameInput: CreateGameInput): Promise<Game> {
     return this.gamesService.create(createGameInput);
   }
 
   @Query(() => [Game], { name: 'games' })
-  findAll() {
+  async findAll(): Promise<Game[]> {
     return this.gamesService.findAll();
   }
 
+  @Query(() => [Game], { name: 'gamesAvailable' })
+  async findAvailable(): Promise<Game[]> {
+    return this.gamesService.findAvailable();
+  }
+
   @Query(() => Game, { name: 'game' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  async findOne(@Args('id', { type: () => Int }) id: number): Promise<Game> {
     return this.gamesService.findOne(id);
   }
 
   @Mutation(() => Game)
-  updateGame(@Args('updateGameInput') updateGameInput: UpdateGameInput) {
+  async updateGame(@Args('updateGameInput') updateGameInput: UpdateGameInput): Promise<Game> {
     return this.gamesService.update(updateGameInput.id, updateGameInput);
   }
 
   @Mutation(() => Game)
-  removeGame(@Args('id', { type: () => Int }) id: number) {
+  async removeGame(@Args('id', { type: () => Int }) id: number): Promise<Game> {
     return this.gamesService.remove(id);
   }
 }
