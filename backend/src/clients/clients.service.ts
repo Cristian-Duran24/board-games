@@ -1,25 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateClientInput, UpdateClientInput } from './dto/inputs';
+import { Client } from './entities/client.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ClientsService {
-  create(createClientInput: CreateClientInput) {
-    return 'This action adds a new client';
+
+  constructor(
+    @InjectRepository(Client) private readonly clientsRepository: Repository<Client>,
+  ) { }
+
+  async create(createClientInput: CreateClientInput): Promise<Client> {
+    try {
+      const client = await this.clientsRepository.create(createClientInput);
+      return await this.clientsRepository.save(client);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new BadRequestException(`Client with phone "${createClientInput.phone}" already exists`);
+      }
+      throw new InternalServerErrorException('An error occurred while creating the client');
+    }
   }
 
-  findAll() {
-    return `This action returns all clients`;
+  async findAll(): Promise<Client[]> {
+    return await this.clientsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: number): Promise<Client> {
+    const client = await this.clientsRepository.findOneBy({ id });
+    if (!client) throw new Error('Client not found');
+    return client;
   }
 
-  update(id: number, updateClientInput: UpdateClientInput) {
-    return `This action updates a #${id} client`;
+  async update(id: number, updateClientInput: UpdateClientInput): Promise<Client> {
+    const client = await this.findOne(id);
+    // Fusionamos los cambios
+    Object.assign(client, updateClientInput);
+    try {
+      return await this.clientsRepository.save(client);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new BadRequestException(`Client with phone "${updateClientInput.phone}" already exists`);
+      }
+      throw new InternalServerErrorException('An error occurred while updating the client');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async remove(id: number): Promise<Client> {
+    const client = await this.findOne(id);
+    await this.clientsRepository.remove(client);
+    return { ...client, id };
   }
 }

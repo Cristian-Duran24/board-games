@@ -3,7 +3,7 @@ import { IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, MinLength } from 'cl
 
 @InputType()
 export class CreateGameInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsNotEmpty()
   @MinLength(5)

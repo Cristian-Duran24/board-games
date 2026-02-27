@@ -17,8 +17,10 @@ type Category {
 }
 
 type Client {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  name: String!
+  phone: String!
+  email: String
 }
 
 type Query {
@@ -70,12 +72,14 @@ input UpdateGameInput {
 }
 
 input CreateClientInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  phone: String!
+  email: String
 }
 
 input UpdateClientInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  name: String
+  phone: String
+  email: String
   id: Int!
 }
