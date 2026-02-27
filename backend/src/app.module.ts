@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
+import { GamesModule } from './games/games.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CategoriesModule } from './categories/categories.module';
       autoLoadEntities: true,
     }),
     CategoriesModule,
+    GamesModule,
   ],
   controllers: [],
   providers: [],

@@ -7,15 +7,25 @@ type Category {
   name: String!
 }
 
+type Game {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   categories: [Category!]!
   categoryById(id: Int!): Category!
+  games: [Game!]!
+  game(id: Int!): Game!
 }
 
 type Mutation {
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
   removeCategory(id: Int!): Category!
+  createGame(createGameInput: CreateGameInput!): Game!
+  updateGame(updateGameInput: UpdateGameInput!): Game!
+  removeGame(id: Int!): Game!
 }
 
 input CreateCategoryInput {
@@ -24,5 +34,16 @@ input CreateCategoryInput {
 
 input UpdateCategoryInput {
   name: String
+  id: Int!
+}
+
+input CreateGameInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateGameInput {
+  """Example field (placeholder)"""
+  exampleField: Int
   id: Int!
 }
