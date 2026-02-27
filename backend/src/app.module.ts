@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { HelloResolver } from './hello.resolver';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -29,8 +29,9 @@ import { HelloResolver } from './hello.resolver';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    CategoriesModule,
   ],
   controllers: [],
-  providers: [HelloResolver],
+  providers: [],
 })
 export class AppModule { }
