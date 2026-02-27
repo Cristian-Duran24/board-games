@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
 import { GamesModule } from './games/games.module';
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { GamesModule } from './games/games.module';
     }),
     CategoriesModule,
     GamesModule,
+    ClientsModule,
   ],
   controllers: [],
   providers: [],
