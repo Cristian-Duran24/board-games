@@ -8,6 +8,7 @@ import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
 import { GamesModule } from './games/games.module';
 import { ClientsModule } from './clients/clients.module';
+import { LoansModule } from './loans/loans.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ClientsModule } from './clients/clients.module';
     CategoriesModule,
     GamesModule,
     ClientsModule,
+    LoansModule,
   ],
   controllers: [],
   providers: [],

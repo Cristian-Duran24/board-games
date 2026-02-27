@@ -23,6 +23,11 @@ type Client {
   email: String
 }
 
+type Loan {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   categories: [Category!]!
   categoryById(id: Int!): Category!
@@ -31,6 +36,8 @@ type Query {
   game(id: Int!): Game!
   clients: [Client!]!
   client(id: Int!): Client!
+  loans: [Loan!]!
+  loan(id: Int!): Loan!
 }
 
 type Mutation {
@@ -43,6 +50,9 @@ type Mutation {
   createClient(createClientInput: CreateClientInput!): Client!
   updateClient(updateClientInput: UpdateClientInput!): Client!
   removeClient(id: Int!): Client!
+  createLoan(createLoanInput: CreateLoanInput!): Loan!
+  updateLoan(updateLoanInput: UpdateLoanInput!): Loan!
+  removeLoan(id: Int!): Loan!
 }
 
 input CreateCategoryInput {
@@ -81,5 +91,16 @@ input UpdateClientInput {
   name: String
   phone: String
   email: String
+  id: Int!
+}
+
+input CreateLoanInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateLoanInput {
+  """Example field (placeholder)"""
+  exampleField: Int
   id: Int!
 }
