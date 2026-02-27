@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Game {
+  id: Int!
+  title: String!
+  inTotal: Int!
+  inStock: Int!
+  image: String
+  price: Float!
+}
+
 type Category {
   id: Int!
   name: String!
@@ -10,12 +19,18 @@ type Category {
 type Query {
   categories: [Category!]!
   categoryById(id: Int!): Category!
+  games: [Game!]!
+  gamesAvailable: [Game!]!
+  game(id: Int!): Game!
 }
 
 type Mutation {
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
   removeCategory(id: Int!): Category!
+  createGame(createGameInput: CreateGameInput!): Game!
+  updateGame(updateGameInput: UpdateGameInput!): Game!
+  removeGame(id: Int!): Game!
 }
 
 input CreateCategoryInput {
@@ -24,5 +39,22 @@ input CreateCategoryInput {
 
 input UpdateCategoryInput {
   name: String
+  id: Int!
+}
+
+input CreateGameInput {
+  title: String!
+  categoryId: Int!
+  inTotal: Int!
+  image: String
+  price: Float!
+}
+
+input UpdateGameInput {
+  title: String
+  categoryId: Int
+  inTotal: Int
+  image: String
+  price: Float
   id: Int!
 }

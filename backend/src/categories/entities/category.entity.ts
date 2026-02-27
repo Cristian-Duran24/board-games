@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Game } from 'src/games/entities/game.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -12,6 +13,6 @@ export class Category {
   @Field(() => String)
   name: string;
 
-  // @OneToMany(() => Juego, (juego) => juego.category)
-  // juegos: Juego[]; // Relación inversa para joins futuros
+  @OneToMany(() => Game, (game) => game.category)
+  games: Game[]; // Relación inversa para joins futuros
 }
