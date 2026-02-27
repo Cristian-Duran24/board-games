@@ -1,7 +1,17 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 @ObjectType()
 export class Category {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @PrimaryGeneratedColumn('increment')
+  @Field(() => Int)
+  id: number;
+
+  @Column({ unique: true })
+  @Field(() => String)
+  name: string;
+
+  // @OneToMany(() => Juego, (juego) => juego.category)
+  // juegos: Juego[]; // Relación inversa para joins futuros
 }

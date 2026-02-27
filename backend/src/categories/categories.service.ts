@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryInput } from './dto/create-category.input';
-import { UpdateCategoryInput } from './dto/update-category.input';
+import { CreateCategoryInput, UpdateCategoryInput } from './dto/inputs';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Category } from './entities/category.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryInput: CreateCategoryInput) {
-    return 'This action adds a new category';
+
+  constructor(@InjectRepository(Category) private readonly categoriesRepository: Repository<Category>){}
+
+  async create(createCategoryInput: CreateCategoryInput): Promise<Category> {
+    const category = this.categoriesRepository.create(createCategoryInput);
+    return await this.categoriesRepository.save(category);
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  async findAll(): Promise<Category[]> {
+    return await this.categoriesRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number): Promise<Category> {
+    const category = await this.categoriesRepository.findOneBy({ id });
+    if (!category) throw new Error(`Category with id "${id}" not found`);
+    return category;
   }
 
-  update(id: number, updateCategoryInput: UpdateCategoryInput) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
+    const category = await this.categoriesRepository.preload(updateCategoryInput)
+    if (!category) throw new Error(`Category with id "${id}" not found`);
+    return this.categoriesRepository.save(category);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number): Promise<Category> {
+    const category = await this.findOne(id);
+    await this.categoriesRepository.remove(category);
+    return { ...category, id } as Category;
   }
 }
