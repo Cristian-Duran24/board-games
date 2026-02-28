@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Game } from 'src/games/entities/game.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -14,5 +14,8 @@ export class Category {
   name: string;
 
   @OneToMany(() => Game, (game) => game.category)
-  games: Game[]; // Relación inversa para joins futuros
+  games: Game[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

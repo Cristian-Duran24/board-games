@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
 import { CreateGameInput, UpdateGameInput } from './dto/inputs';
+import { PaginationArgs } from 'src/common/dto/args/pagination.args';
 
 @Resolver(() => Game)
 export class GamesResolver {
@@ -13,13 +14,13 @@ export class GamesResolver {
   }
 
   @Query(() => [Game], { name: 'games' })
-  async findAll(): Promise<Game[]> {
-    return this.gamesService.findAll();
+  async findAll(@Args() paginationArgs: PaginationArgs): Promise<Game[]> {
+    return this.gamesService.findAll(paginationArgs);
   }
 
   @Query(() => [Game], { name: 'gamesAvailable' })
-  async findAvailable(): Promise<Game[]> {
-    return this.gamesService.findAvailable();
+  async findAvailable(@Args() paginationArgs: PaginationArgs): Promise<Game[]> {
+    return this.gamesService.findAvailable(paginationArgs);
   }
 
   @Query(() => Game, { name: 'game' })

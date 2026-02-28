@@ -1,6 +1,7 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { ClientsService } from './clients.service';
+import { PaginationArgs } from 'src/common/dto/args/pagination.args';
 import { Client } from './entities/client.entity';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { ClientsService } from './clients.service';
 import { CreateClientInput, UpdateClientInput } from './dto/inputs';
 
 @Resolver(() => Client)
@@ -13,8 +14,8 @@ export class ClientsResolver {
   }
 
   @Query(() => [Client], { name: 'clients' })
-  findAll(): Promise<Client[]> {
-    return this.clientsService.findAll();
+  findAll(@Args() paginationArgs: PaginationArgs): Promise<Client[]> {
+    return this.clientsService.findAll(paginationArgs);
   }
 
   @Query(() => Client, { name: 'client' })

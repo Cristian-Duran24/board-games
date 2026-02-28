@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './entities/game.entity';
 import { MoreThan, Repository } from 'typeorm';
 import { Category } from 'src/categories/entities/category.entity';
+import { PaginationArgs } from 'src/common/dto/args/pagination.args';
 
 @Injectable()
 export class GamesService {
@@ -17,17 +18,31 @@ export class GamesService {
   async create(createGameInput: CreateGameInput): Promise<Game> {
     const category = await this.categoriesRepository.findOneBy({ id: createGameInput.categoryId });
     if (!category) throw new BadRequestException('Category not found');
-    const game = this.gamesRepository.create({ ...createGameInput, category, inStock: createGameInput.inTotal });
+    
+    // Convertir precio a decimal si es necesario (TypeORM lo maneja con el tipo 'decimal')
+    const game = this.gamesRepository.create({ 
+      ...createGameInput, 
+      category, 
+      inStock: createGameInput.inTotal 
+    });
     return this.gamesRepository.save(game);
   }
 
-  async findAll(): Promise<Game[]> {
-    return await this.gamesRepository.find({ relations: ['category'] });
+  async findAll(paginationArgs: PaginationArgs): Promise<Game[]> {
+    const { limit, offset } = paginationArgs;
+    return await this.gamesRepository.find({ 
+      take: limit, 
+      skip: offset,
+      relations: ['category'] 
+    });
   }
 
-  async findAvailable(): Promise<Game[]> {
+  async findAvailable(paginationArgs: PaginationArgs): Promise<Game[]> {
+    const { limit, offset } = paginationArgs;
     return await this.gamesRepository.find({
       where: { inStock: MoreThan(0) },
+      take: limit,
+      skip: offset,
       relations: ['category']
     });
   }
@@ -52,8 +67,7 @@ export class GamesService {
       }
     }
 
-    // 3. Fusionamos los cambios (esto sobreescribe inTotal con el nuevo valor del input)
-    // Nota: Usamos Object.assign o merge del repositorio en lugar de preload para tener control manual
+    // 3. Fusionamos los cambios
     const updatedGame = this.gamesRepository.merge(currentGame, updateGameInput);
 
     // 4. Guardamos
@@ -62,7 +76,9 @@ export class GamesService {
 
   async remove(id: number): Promise<Game> {
     const game = await this.findOne(id);
-    await this.gamesRepository.remove(game);
-    return {...game, id};
+    // Soft Remove (Borrado Lógico)
+    await this.gamesRepository.softRemove(game);
+    // Copiamos el ID para devolverlo ya que al eliminar puede quedar undefined en memoria
+    return { ...game, id };
   }
 }

@@ -3,6 +3,7 @@ import { CreateClientInput, UpdateClientInput } from './dto/inputs';
 import { Client } from './entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PaginationArgs } from 'src/common/dto/args/pagination.args';
 
 @Injectable()
 export class ClientsService {
@@ -13,7 +14,7 @@ export class ClientsService {
 
   async create(createClientInput: CreateClientInput): Promise<Client> {
     try {
-      const client = await this.clientsRepository.create(createClientInput);
+      const client = this.clientsRepository.create(createClientInput);
       return await this.clientsRepository.save(client);
     } catch (error) {
       if (error.code === '23505') {
@@ -23,8 +24,12 @@ export class ClientsService {
     }
   }
 
-  async findAll(): Promise<Client[]> {
-    return await this.clientsRepository.find();
+  async findAll(paginationArgs: PaginationArgs): Promise<Client[]> {
+    const { limit, offset } = paginationArgs;
+    return await this.clientsRepository.find({ 
+      take: limit, 
+      skip: offset 
+    });
   }
 
   async findOne(id: number): Promise<Client> {
@@ -35,7 +40,6 @@ export class ClientsService {
 
   async update(id: number, updateClientInput: UpdateClientInput): Promise<Client> {
     const client = await this.findOne(id);
-    // Fusionamos los cambios
     Object.assign(client, updateClientInput);
     try {
       return await this.clientsRepository.save(client);
@@ -49,7 +53,8 @@ export class ClientsService {
 
   async remove(id: number): Promise<Client> {
     const client = await this.findOne(id);
-    await this.clientsRepository.remove(client);
+    // Soft Remove
+    await this.clientsRepository.softRemove(client);
     return { ...client, id };
   }
 }

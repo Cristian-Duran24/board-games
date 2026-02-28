@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Loan } from 'src/loans/entities/loan.entity';
+import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -20,6 +21,9 @@ export class Client {
   @Field(() => String, { nullable: true })
   email: string;
 
-  // @OneToMany(() => Prestamo, (prestamo) => prestamo.cliente)
-  // prestamos: Prestamo[]; // Relación
+  @OneToMany(() => Loan, (loan) => loan.client)
+  loans: Loan[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

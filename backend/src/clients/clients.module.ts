@@ -3,6 +3,7 @@ import { ClientsService } from './clients.service';
 import { ClientsResolver } from './clients.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
+import { Loan } from 'src/loans/entities/loan.entity';
 
 @Module({
   providers: [
@@ -10,7 +11,7 @@ import { Client } from './entities/client.entity';
     ClientsService
   ],
   imports: [
-    TypeOrmModule.forFeature([Client])
+    TypeOrmModule.forFeature([Client, Loan])
   ],
 })
 export class ClientsModule { }

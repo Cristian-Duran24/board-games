@@ -1,6 +1,7 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { Category } from 'src/categories/entities/category.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Loan } from 'src/loans/entities/loan.entity';
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -13,7 +14,9 @@ export class Game {
   @Field(() => String)
   title: string;
 
-  @ManyToOne(() => Category, (category) => category.games, { eager: true })
+  // Optimización: eager: false (por defecto) para no traer la categoría siempre
+  @ManyToOne(() => Category, (category) => category.games) 
+  @Field(() => Category)
   category: Category;
 
   @Column({ default: 1 })
@@ -28,10 +31,13 @@ export class Game {
   @Field(() => String, { nullable: true })
   image: string;
 
-  @Column({ type: 'decimal', default: 0 })
-  @Field(() => Number)
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Field(() => Float)
   price: number;
 
-  // @OneToMany(() => Prestamo, (prestamo) => prestamo.juego)
-  // prestamos: Prestamo[]; // Relación inversa
+  @OneToMany(() => Loan, (loan) => loan.game)
+  loans: Loan[]; 
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
 import { CreateCategoryInput, UpdateCategoryInput } from './dto/inputs';
+import { PaginationArgs } from 'src/common/dto/args/pagination.args';
 
 @Resolver(() => Category)
 export class CategoriesResolver {
@@ -13,8 +14,8 @@ export class CategoriesResolver {
   }
 
   @Query(() => [Category], { name: 'categories' })
-  async findAll(): Promise<Category[]> {
-    return this.categoriesService.findAll();
+  async findAll(@Args() paginationArgs: PaginationArgs): Promise<Category[]> {
+    return this.categoriesService.findAll(paginationArgs);
   }
 
   @Query(() => Category, { name: 'categoryById' })
