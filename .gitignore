@@ -15,8 +15,8 @@ Thumbs.db
 # Backend
 backend/.env
 backend/.env.*
-!backend/.env.template
-!backend/.env.example
+backend/.env.template
+backend/.env.example
 
 # --- Backend (NestJS / Node) ---
 # Build
@@ -33,8 +33,8 @@ backend/postgres-data/
 # --- IDE / Editor ---
 # VS Code
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
 *.code-workspace
