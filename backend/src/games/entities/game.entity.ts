@@ -27,9 +27,9 @@ export class Game {
   @Field(() => Int)
   inStock: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   @Field(() => String, { nullable: true })
-  image: string;
+  image?: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   @Field(() => Float)

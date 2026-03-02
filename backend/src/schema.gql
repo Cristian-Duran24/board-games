@@ -15,7 +15,9 @@ type Loan {
   client: Client!
   startDate: DateTime!
   endDate: DateTime!
+  actualReturnDate: DateTime
   status: String!
+  totalPrice: Float!
   penalty: Float!
 }
 
@@ -120,5 +122,11 @@ input UpdateLoanInput {
   startDate: DateTime
   endDate: DateTime
   id: Int!
-  status: String
+  status: LoanStatus
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
 }

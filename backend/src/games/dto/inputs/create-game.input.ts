@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, MinLength } from 'class-validator';
+import { IsBase64, IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateGameInput {
@@ -20,7 +20,7 @@ export class CreateGameInput {
   inTotal: number;
 
   @Field({ nullable: true })
-  @IsString()
+  @IsBase64({}, { message: 'Image must be a valid base64 string' })
   image?: string;
 
   @Field(() => Number)
