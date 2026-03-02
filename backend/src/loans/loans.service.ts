@@ -30,9 +30,9 @@ export class LoansService {
 
     if (game.inStock <= 0) throw new BadRequestException(`Game "${game.title}" is out of stock`);
 
-    // Fechas: usandas las del input o valores por defecto
+    // Fechas: Usan las del input o valores por defecto
     const startTimeRequest = startDate ? new Date(startDate) : new Date();
-    // Corrección: Por defecto 1 día de préstamo (antes era 7)
+    // Por defecto 1 día de préstamo si no se proporciona endDate
     const endTimeRequest = endDate ? new Date(endDate) : new Date(new Date(startTimeRequest).setDate(startTimeRequest.getDate() + 1));
     
     // Validación fecha fin > fecha inicio
@@ -100,7 +100,6 @@ export class LoansService {
   }
 
   // Método para verificar y marcar préstamos vencidos automáticamente
-  // Debería ser llamado por un Cron Job diario
   async checkOverdueLoans(): Promise<string> {
     const today = new Date();
     
