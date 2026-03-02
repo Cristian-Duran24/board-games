@@ -18,6 +18,11 @@ async function bootstrap() {
     })
   );
 
+  app.enableCors({
+    origin: 'http://localhost:4200',   // solo desarrollo
+    credentials: true,
+  });
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   logger.log(`App running on port ${port}`);
