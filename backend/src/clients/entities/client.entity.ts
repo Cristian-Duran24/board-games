@@ -19,11 +19,11 @@ export class Client {
 
   @Column({ nullable: true })
   @Field(() => String, { nullable: true })
-  email: string;
+  email?: string;
 
   @OneToMany(() => Loan, (loan) => loan.client)
   loans: Loan[];
 
   @DeleteDateColumn()
-  deletedAt?: Date;
+  deletedAt: Date;
 }

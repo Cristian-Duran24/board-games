@@ -6,6 +6,7 @@ import { Client } from '../clients/entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository, LessThan } from 'typeorm';
 import { PaginationArgs } from 'src/common/dto/args/pagination.args';
+import { LoanStatus } from './enums/loan-status.enum';
 
 
 @Injectable()
@@ -30,15 +31,21 @@ export class LoansService {
 
     if (game.inStock <= 0) throw new BadRequestException(`Game "${game.title}" is out of stock`);
 
-    // Fechas: usandas las del input o valores por defecto
+    // Fechas: Usan las del input o valores por defecto
     const startTimeRequest = startDate ? new Date(startDate) : new Date();
-    // Corrección: Por defecto 1 día de préstamo (antes era 7)
+    // Por defecto 1 día de préstamo si no se proporciona endDate
     const endTimeRequest = endDate ? new Date(endDate) : new Date(new Date(startTimeRequest).setDate(startTimeRequest.getDate() + 1));
-    
+
     // Validación fecha fin > fecha inicio
     if (endTimeRequest <= startTimeRequest) {
       throw new BadRequestException('La fecha de fin debe ser mayor a la fecha de inicio');
     }
+
+    // Calcular el precio total basado en los días de préstamo
+    const diffTime = Math.abs(endTimeRequest.getTime() - startTimeRequest.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    const daysToCharge = diffDays === 0 ? 1 : diffDays;
+    const calculatedTotal = daysToCharge * game.price;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -53,7 +60,8 @@ export class LoansService {
         client,
         startDate: startTimeRequest,
         endDate: endTimeRequest,
-        status: 'active', // Estado en inglés
+        status: LoanStatus.ACTIVE, // Uso de Enum
+        totalPrice: calculatedTotal,
         penalty: 0
       });
 
@@ -71,50 +79,69 @@ export class LoansService {
   }
 
   async returnLoan(id: number): Promise<Loan> {
-    const loan = await this.loansRepository.findOne({
-      where: { id },
-      relations: ['game'],
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (!loan) throw new NotFoundException(`Loan with id ${id} not found`);
-    if (loan.status === 'returned') throw new BadRequestException('Loan already returned');
+    try {
+      const loan = await queryRunner.manager.findOne(Loan, {
+        where: { id },
+        relations: ['game', 'client'],
+      });
 
-    const today = new Date();
-    loan.penalty = 0;
+      if (!loan) throw new NotFoundException(`Loan with id ${id} not found`);
+      if (loan.status === LoanStatus.RETURNED) throw new BadRequestException('Loan already returned');
 
-    if (today > loan.endDate) {
-      const diffTime = Math.abs(today.getTime() - loan.endDate.getTime());
-      const daysLate = Math.ceil(diffTime / (1000 * 3600 * 24));
-      loan.penalty = daysLate * 1.0; 
+      const today = new Date();
+      loan.penalty = 0;
+
+      if (today > loan.endDate) {
+        const diffTime = Math.abs(today.getTime() - loan.endDate.getTime());
+        const daysLate = Math.ceil(diffTime / (1000 * 3600 * 24));
+        loan.penalty = daysLate * 1.0;
+      }
+
+      loan.status = LoanStatus.RETURNED; // Uso de Enum
+      loan.actualReturnDate = today; // Nueva columna, conservamos endDate original
+
+      // Guardado atómico stock del juego
+      if (loan.game) {
+        loan.game.inStock++;
+        await queryRunner.manager.save(loan.game);
+      }
+
+      // Guardado atómico del préstamo
+      await queryRunner.manager.save(loan);
+      await queryRunner.commitTransaction();
+      return loan;
+
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      // Solo logueamos si no es una excepción controlada
+      if (!(error instanceof BadRequestException) && !(error instanceof NotFoundException)) {
+        this.logger.error(error);
+      }
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    loan.status = 'returned'; // Estado en inglés
-    loan.endDate = new Date(); 
-
-    if (loan.game) {
-      loan.game.inStock++;
-      await this.gamesRepository.save(loan.game);
-    }
-
-    return this.loansRepository.save(loan);
   }
 
   // Método para verificar y marcar préstamos vencidos automáticamente
-  // Debería ser llamado por un Cron Job diario
   async checkOverdueLoans(): Promise<string> {
     const today = new Date();
-    
+
     // Buscar préstamos activos cuya fecha fin haya pasado
     const overdueLoans = await this.loansRepository.find({
       where: {
-        status: 'active',
+        status: LoanStatus.ACTIVE,
         endDate: LessThan(today)
       }
     });
 
     let modifiedCount = 0;
     for (const loan of overdueLoans) {
-      loan.status = 'overdue'; // Nuevo estado
+      loan.status = LoanStatus.OVERDUE; // Uso de Enum
       await this.loansRepository.save(loan);
       modifiedCount++;
     }
@@ -132,7 +159,7 @@ export class LoansService {
   }
 
   async findOne(id: number): Promise<Loan> {
-    const loan = await this.loansRepository.findOne({ 
+    const loan = await this.loansRepository.findOne({
       where: { id },
       relations: ['game', 'client']
     });
@@ -142,7 +169,7 @@ export class LoansService {
 
   async update(id: number, updateLoanInput: UpdateLoanInput): Promise<Loan> {
     const loan = await this.findOne(id);
-    if (updateLoanInput.status === 'returned' && loan.status !== 'returned') {
+    if (updateLoanInput.status === LoanStatus.RETURNED && loan.status !== LoanStatus.RETURNED) {
       throw new BadRequestException('Use the "returnGame" mutation to return a game.');
     }
     Object.assign(loan, updateLoanInput);
