@@ -20,11 +20,6 @@ export class StockBadgeComponent {
       : '● Agotado'
   );
 
-  // Reutiliza los mismos tokens de chip del Design System (mismo lenguaje visual)
-  // bg-chip-green-bg  ← --color-chip-green-bg:  rgba(34, 197, 94, 0.1)
-  // text-chip-green   ← --color-chip-green:      #22C55E
-  // bg-chip-red-bg    ← --color-chip-red-bg:    rgba(214, 69, 69, 0.1)
-  // text-chip-red     ← --color-chip-red:        #D64545
   protected readonly computedClasses = computed(() => {
     const base = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border';
     return this.isAvailable()

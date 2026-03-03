@@ -1,39 +1,61 @@
-<!-- Card de juego: imagen, categoría, título, jugadores, precio/día y stock -->
-<article class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer">
+<!-- Card de juego: imagen/fallback, categoría, título, jugadores, precio/día y stock -->
+<article
+  class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer relative">
 
-  <!-- Imagen de portada del juego -->
+  <!-- ── Área de imagen ── -->
   <figure class="relative h-48 overflow-hidden bg-subtle/30">
-    <img
-      [src]="image()"
-      [alt]="'Portada de ' + titulo()"
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-      loading="lazy"
-    />
+
+    @if (imageSrc()) {
+    <!-- Imagen Base64 reconstruida desde BD -->
+    <img [src]="imageSrc()" [alt]="'Portada de ' + title()"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+    } @else {
+    <!-- Fallback: iniciales del juego + color derivado del id -->
+    <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300"
+      [style.background-color]="fallbackBg()">
+      <span class="text-5xl font-black text-white/80 select-none tracking-tight">
+        {{ initials() }}
+      </span>
+    </div>
+    }
+
     <!-- Badge de stock superpuesto sobre la imagen -->
     <span class="absolute top-3 right-3">
-      <app-stock-badge [stock]="stockDisponible()" />
+      <app-stock-badge [stock]="stock()" />
     </span>
+
     <!-- Chip de categoría superpuesto sobre la imagen -->
     <span class="absolute top-3 left-3">
       <app-chip [label]="category()" [color]="categoryColor()" />
     </span>
+
   </figure>
 
-  <!-- Contenido informativo del juego -->
+  <!-- ── Contenido informativo ── -->
   <section class="p-4" aria-label="Información del juego">
 
-    <!-- Precio por día (destacado) -->
+    <!-- Título + precio por día -->
     <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-bold text-text-primary truncate pr-2">{{ titulo() }}</h3>
-      <span class="shrink-0 text-sm font-semibold text-warning bg-warning/10 border border-warning/25 px-2 py-0.5 rounded-lg">
-        Bs {{ precio() }}/día
+      <h3 class="text-lg font-bold text-text-primary truncate pr-2">{{ title() }}</h3>
+      <span
+        class="shrink-0 text-sm font-semibold text-warning bg-warning/10 border border-warning/25 px-2 py-0.5 rounded-lg">
+        Bs {{ price() }}/día
       </span>
     </div>
 
-    <!-- Metadatos: jugadores y duración -->
+    <!-- Metadatos: jugadores y duración (con fallback si son undefined) -->
     <p class="text-text-secondary text-sm flex items-center gap-3 mb-4">
-      <span>{{ jugadoresMin() }}–{{ jugadoresMax() }} jugadores</span>
-      <span>{{ duracion() }}m</span>
+      @if (playersMin() !== undefined && playersMax() !== undefined) {
+      <span>{{ playersMin() }}–{{ playersMax() }} jugadores</span>
+      } @else {
+      <span class="text-text-muted">Jugadores N/D</span>
+      }
+
+      @if (duration() !== undefined) {
+      <span>{{ duration() }}m</span>
+      } @else {
+      <span class="text-text-muted">Duración N/D</span>
+      }
     </p>
 
     <!-- Acción: ver detalles del juego -->

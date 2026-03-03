@@ -58,3 +58,73 @@
   --color-button-filled-primary: #1D6AE5;
   --color-button-filled-success: #16A34A;
 }
+
+/* ============================================================
+  ANGULAR MATERIAL
+  Las mapeamos a nuestros tokens de Tailwind del @theme
+   ============================================================ */
+html,
+body {
+  /* Colores primarios */
+  --mat-sys-primary:                   var(--color-primary);
+  --mat-sys-on-primary:                #ffffff;
+  --mat-sys-primary-container:         rgba(59, 130, 246, 0.15);
+  --mat-sys-on-primary-container:      var(--color-primary);
+
+  /* Superficies */
+  --mat-sys-surface:                   var(--color-surface);
+  --mat-sys-on-surface:                var(--color-text-primary);
+  --mat-sys-on-surface-variant:        var(--color-text-secondary);
+  --mat-sys-surface-container:         var(--color-subtle);
+  --mat-sys-surface-container-high:    var(--color-border-default);
+  --mat-sys-surface-container-highest: var(--color-border-subtle);
+  --mat-sys-background:                var(--color-canvas);
+  --mat-sys-on-background:             var(--color-text-primary);
+
+  /* Errores y feedback */
+  --mat-sys-error:                     var(--color-danger);
+  --mat-sys-on-error:                  #ffffff;
+  --mat-sys-error-container:           var(--color-bg-danger);
+  --mat-sys-on-error-container:        var(--color-danger);
+
+  /* Bordes y outlines */
+  --mat-sys-outline:                   var(--color-border-default);
+  --mat-sys-outline-variant:           var(--color-border-subtle);
+
+  /* Form fields (mat-form-field específico) */
+  --mat-form-field-container-color:    var(--color-surface);
+  --mat-select-panel-background-color: var(--color-surface);
+
+  /* Dialog */
+  --mat-dialog-container-color:        var(--color-surface);
+
+  /* Snackbar */
+  --mat-snack-bar-button-color:        var(--color-primary);
+
+  /* Progress spinner */
+  --mat-progress-spinner-active-indicator-color: var(--color-primary);
+
+  /* Tabs */
+  --mat-tab-header-active-label-text-color:     var(--color-primary);
+  --mat-tab-header-inactive-label-text-color:   var(--color-text-secondary);
+  --mat-tab-header-active-indicator-color:      var(--color-primary);
+
+  /* Modo oscuro explícito */
+  color-scheme: dark;
+}
+
+/* ============================================================
+  UTILIDADES PERSONALIZADAS (Tailwind CSS 4 @utility)
+   ============================================================ */
+
+/* Input estilizado con tokens del design system */
+@utility input-field {
+  @apply w-full bg-surface border border-border-default rounded-2xl px-4 py-3
+        text-text-primary placeholder:text-text-muted
+        focus:outline-none focus:border-primary transition-all;
+}
+
+/* Label de formulario */
+@utility form-label {
+  @apply block text-sm font-medium text-text-secondary mb-1.5;
+}

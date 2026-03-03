@@ -1,30 +1,50 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // ── Landing page (sin sidebar) ──────────────────────────────────────
   {
     path: '',
-    loadComponent: () => import('./features/home/home-page.component').then(m => m.HomePageComponent),
-    title: '10Minds BoardGames - Inicio'
+    loadComponent: () =>
+      import('./features/home/home-page.component').then(m => m.HomePageComponent),
+    title: '10Minds BoardGames - Inicio',
   },
-  // Future Usage (Lazy Load) - Placeholders temporales para probar navegación
+
+  // ── Páginas internas (con sidebar + layout shell) ────────────────────
   {
-    path: 'juegos',
-    loadComponent: () => import('./features/home/home-page.component').then(m => m.HomePageComponent),
+    path: '',
+    loadComponent: () =>
+      import('./layout/layout-shell.component').then(m => m.LayoutShellComponent),
+    children: [
+      {
+        path: 'juegos',
+        loadComponent: () =>
+          import('./features/games/games-page.component').then(m => m.GamesPageComponent),
+        title: '10Minds BoardGames - Juegos',
+      },
+      {
+        path: 'prestamos',
+        loadComponent: () =>
+          import('./features/home/home-page.component').then(m => m.HomePageComponent),
+        title: '10Minds BoardGames - Préstamos',
+      },
+      {
+        path: 'clientes',
+        loadComponent: () =>
+          import('./features/home/home-page.component').then(m => m.HomePageComponent),
+        title: '10Minds BoardGames - Clientes',
+      },
+      {
+        path: 'categorias',
+        loadComponent: () =>
+          import('./features/home/home-page.component').then(m => m.HomePageComponent),
+        title: '10Minds BoardGames - Categorías',
+      },
+    ],
   },
-  {
-    path: 'prestamos',
-    loadComponent: () => import('./features/home/home-page.component').then(m => m.HomePageComponent),
-  },
-  {
-    path: 'clientes',
-    loadComponent: () => import('./features/home/home-page.component').then(m => m.HomePageComponent),
-  },
-  {
-    path: 'categorias',
-    loadComponent: () => import('./features/home/home-page.component').then(m => m.HomePageComponent), // Placeholder temporal
-  },
+
+  // ── Wildcard ─────────────────────────────────────────────────────────
   {
     path: '**',
-    redirectTo: ''
-  }
+    redirectTo: '',
+  },
 ];
