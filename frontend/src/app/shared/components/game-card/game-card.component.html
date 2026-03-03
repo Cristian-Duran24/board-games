@@ -1,0 +1,47 @@
+<!-- Card de juego: imagen, categoría, título, jugadores, precio/día y stock -->
+<article class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer">
+
+  <!-- Imagen de portada del juego -->
+  <figure class="relative h-48 overflow-hidden bg-subtle/30">
+    <img
+      [src]="image()"
+      [alt]="'Portada de ' + titulo()"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      loading="lazy"
+    />
+    <!-- Badge de stock superpuesto sobre la imagen -->
+    <span class="absolute top-3 right-3">
+      <app-stock-badge [stock]="stockDisponible()" />
+    </span>
+    <!-- Chip de categoría superpuesto sobre la imagen -->
+    <span class="absolute top-3 left-3">
+      <app-chip [label]="category()" [color]="categoryColor()" />
+    </span>
+  </figure>
+
+  <!-- Contenido informativo del juego -->
+  <section class="p-4" aria-label="Información del juego">
+
+    <!-- Precio por día (destacado) -->
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-bold text-text-primary truncate pr-2">{{ titulo() }}</h3>
+      <span class="shrink-0 text-sm font-semibold text-warning bg-warning/10 border border-warning/25 px-2 py-0.5 rounded-lg">
+        Bs {{ precio() }}/día
+      </span>
+    </div>
+
+    <!-- Metadatos: jugadores y duración -->
+    <p class="text-text-secondary text-sm flex items-center gap-3 mb-4">
+      <span>{{ jugadoresMin() }}–{{ jugadoresMax() }} jugadores</span>
+      <span>{{ duracion() }}m</span>
+    </p>
+
+    <!-- Acción: ver detalles del juego -->
+    <footer class="pt-3 border-t border-border-subtle flex justify-end">
+      <app-button variant="outlined" color="primary" size="sm">
+        Ver detalles
+      </app-button>
+    </footer>
+
+  </section>
+</article>
