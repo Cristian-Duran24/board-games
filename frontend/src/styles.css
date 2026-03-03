@@ -1,3 +1,60 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@theme {
+  /* === SEMANTIC TOKENS === */
+
+  /* Text Colors */
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --color-text-inverse: #F8FAFC;
+
+  /* Background Colors */
+  --color-canvas: #0F172A;
+  --color-surface: #1B273B;
+  --color-subtle: #334155;
+  --color-bg-success: #14532D;
+  --color-bg-warning: #713F12;
+  --color-bg-danger: #5A1717;
+
+  /* Brand Colors */
+  --color-primary: #3B82F6;
+  --color-success: #22C55E;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+  --color-secondary: #1B273B;
+
+  /* Borders */
+  --color-border-default: #475569;
+  --color-border-subtle: #334155;
+  --color-border-brand: #3B82F6;
+
+  /* === Chips === */
+  --color-chip-blue: #60A5FA;
+  --color-chip-blue-bg: rgba(59, 130, 246, 0.1);
+  --color-chip-blue-border: rgba(59, 130, 246, 0.25);
+
+  --color-chip-green: #22C55E;
+  --color-chip-green-bg: rgba(34, 197, 94, 0.1);
+  --color-chip-green-border: rgba(34, 197, 94, 0.25);
+
+  --color-chip-red: #D64545;
+  --color-chip-red-bg: rgba(214, 69, 69, 0.1);
+  --color-chip-red-border: rgba(214, 69, 69, 0.25);
+
+  --color-chip-yellow: #EAB308;
+  --color-chip-yellow-bg: rgba(234, 179, 8, 0.1);
+  --color-chip-yellow-border: rgba(234, 179, 8, 0.25);
+
+  --color-chip-indigo: #6366F1;
+  --color-chip-indigo-bg: rgba(99, 102, 241, 0.1);
+  --color-chip-indigo-border: rgba(99, 102, 241, 0.25);
+
+  --color-chip-disabled: #64748B;
+  --color-chip-disabled-bg: rgba(100, 116, 139, 0.1);
+  --color-chip-disabled-border: rgba(100, 116, 139, 0.25);
+
+  /* === Buttons === */
+  --color-button-filled-primary: #1D6AE5;
+  --color-button-filled-success: #16A34A;
+}
