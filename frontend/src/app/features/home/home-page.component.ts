@@ -9,6 +9,5 @@ import { LucideAngularModule, Play } from 'lucide-angular';
   templateUrl: './home-page.component.html'
 })
 export class HomePageComponent {
-  // Exponemos el icono explícitamente para usarlo en el template
   protected readonly playIcon = Play;
 }
