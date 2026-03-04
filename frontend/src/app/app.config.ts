@@ -1,7 +1,6 @@
 import { ApplicationConfig, provideZonelessChangeDetection, provideBrowserGlobalErrorListeners, inject } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
@@ -12,7 +11,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideAnimationsAsync(),
+    // provideAnimationsAsync() incompatible con modo zoneless (Zone.js no está activo).
     provideHttpClient(),
     provideApollo(() => {
       const httpLink = inject(HttpLink);

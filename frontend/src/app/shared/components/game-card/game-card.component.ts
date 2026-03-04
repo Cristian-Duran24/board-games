@@ -1,12 +1,13 @@
 import { Component, computed, input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { LucideAngularModule, Users, Clock, MoreVertical } from 'lucide-angular';
 import { ChipComponent, type ChipColor } from '../chip/chip.component';
 import { StockBadgeComponent } from '../stock-badge/stock-badge.component';
-import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-game-card',
   standalone: true,
-  imports: [ChipComponent, StockBadgeComponent, ButtonComponent],
+  imports: [DecimalPipe, LucideAngularModule, ChipComponent, StockBadgeComponent],
   templateUrl: './game-card.component.html'
 })
 export class GameCardComponent {
@@ -55,4 +56,8 @@ export class GameCardComponent {
     const img = this.image();
     return img ? `data:image/png;base64,${img}` : null;
   });
+
+  protected readonly iconUsers = Users;
+  protected readonly iconClock = Clock;
+  protected readonly iconMoreVertical = MoreVertical;
 }

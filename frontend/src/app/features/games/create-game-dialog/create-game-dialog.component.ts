@@ -12,18 +12,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { LucideAngularModule, X, Upload, Image } from 'lucide-angular';
+import { LucideAngularModule, X, Image } from 'lucide-angular';
 
 import { GamesService } from '../games.service';
 import type { Category } from '../interfaces/game.interface';
 
-// ── Datos que recibe el dialog desde el padre ─────────────────────────────
 export interface CreateGameDialogData {
   categories: Category[];
 }
@@ -35,10 +30,6 @@ export interface CreateGameDialogData {
   imports: [
     ReactiveFormsModule,
     MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
     LucideAngularModule,
@@ -47,24 +38,19 @@ export interface CreateGameDialogData {
 })
 export class CreateGameDialogComponent implements OnInit {
 
-  // ── Inyecciones ────────────────────────────────────────────────────────
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<CreateGameDialogComponent>);
   readonly dialogData = inject<CreateGameDialogData>(MAT_DIALOG_DATA);
   private readonly gamesService = inject(GamesService);
   private readonly snackBar = inject(MatSnackBar);
 
-  // ── Iconos Lucide ──────────────────────────────────────────────────────
   protected readonly iconClose = X;
-  protected readonly iconUpload = Upload;
   protected readonly iconImage = Image;
 
-  // ── Estado interno ─────────────────────────────────────────────────────
   protected readonly submitting = signal(false);
   protected readonly imagePreview = signal<string | null>(null);
   private imageBase64: string | undefined = undefined;
 
-  // ── Formulario ─────────────────────────────────────────────────────────
   form!: FormGroup;
 
   ngOnInit(): void {
@@ -79,12 +65,7 @@ export class CreateGameDialogComponent implements OnInit {
     });
   }
 
-  // ── Manejo de imagen ───────────────────────────────────────────────────
-
-  /**
-   * Lee el archivo seleccionado, extrae el Base64 puro (sin prefijo data:...)
-   * y genera el preview para mostrar en el formulario.
-   */
+  /** Lee el archivo, extrae Base64 puro y genera preview */
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -119,8 +100,6 @@ export class CreateGameDialogComponent implements OnInit {
     this.imageBase64 = undefined;
     this.imagePreview.set(null);
   }
-
-  // ── Envío del formulario ───────────────────────────────────────────────
 
   onSubmit(): void {
     if (this.form.invalid || this.submitting()) return;

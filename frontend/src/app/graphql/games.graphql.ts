@@ -25,18 +25,6 @@ export const GET_GAMES = gql`
 `;
 
 /**
- * Obtiene todas las categorías para poblar el filtro de tabs y el select del dialog.
- */
-export const GET_CATEGORIES = gql`
-  query GetCategories {
-    categories {
-      id
-      name
-    }
-  }
-`;
-
-/**
  * Crea un nuevo juego con imagen Base64 pura (sin prefijo data:...).
  * Devuelve los campos necesarios para actualizar la lista local.
  */

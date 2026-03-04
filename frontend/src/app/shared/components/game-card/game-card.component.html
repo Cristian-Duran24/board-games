@@ -1,16 +1,14 @@
-<!-- Card de juego: imagen/fallback, categoría, título, jugadores, precio/día y stock -->
+<!-- Card de juego — Diseño fiel al prototipo -->
 <article
-  class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer relative">
+  class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer">
 
   <!-- ── Área de imagen ── -->
   <figure class="relative h-48 overflow-hidden bg-subtle/30">
 
     @if (imageSrc()) {
-    <!-- Imagen Base64 reconstruida desde BD -->
     <img [src]="imageSrc()" [alt]="'Portada de ' + title()"
       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
     } @else {
-    <!-- Fallback: iniciales del juego + color derivado del id -->
     <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300"
       [style.background-color]="fallbackBg()">
       <span class="text-5xl font-black text-white/80 select-none tracking-tight">
@@ -19,51 +17,51 @@
     </div>
     }
 
-    <!-- Badge de stock superpuesto sobre la imagen -->
-    <span class="absolute top-3 right-3">
-      <app-stock-badge [stock]="stock()" />
-    </span>
-
-    <!-- Chip de categoría superpuesto sobre la imagen -->
+    <!-- Chip de categoría (top-left) -->
     <span class="absolute top-3 left-3">
       <app-chip [label]="category()" [color]="categoryColor()" />
     </span>
 
+    <!-- Botón 3 puntos (top-right) -->
+    <button type="button"
+      class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg bg-canvas/60 hover:bg-canvas/90 text-white transition-colors"
+      aria-label="Más acciones">
+      <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
+    </button>
+
   </figure>
 
   <!-- ── Contenido informativo ── -->
-  <section class="p-4" aria-label="Información del juego">
+  <section class="px-4 pt-4 pb-3" aria-label="Información del juego">
 
-    <!-- Título + precio por día -->
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-bold text-text-primary truncate pr-2">{{ title() }}</h3>
+    <!-- Título + Precio -->
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <h3 class="text-base font-bold text-text-primary truncate">{{ title() }}</h3>
       <span
-        class="shrink-0 text-sm font-semibold text-warning bg-warning/10 border border-warning/25 px-2 py-0.5 rounded-lg">
-        Bs {{ price() }}/día
+        class="shrink-0 text-xs font-semibold text-warning bg-warning/10 border border-warning/25 px-2.5 py-0.5 rounded-lg whitespace-nowrap">
+        Bs {{ price() | number:'1.2-2' }}/día
       </span>
     </div>
 
-    <!-- Metadatos: jugadores y duración (con fallback si son undefined) -->
-    <p class="text-text-secondary text-sm flex items-center gap-3 mb-4">
+    <!-- Metadatos: jugadores y duración -->
+    <div class="flex items-center gap-4 text-sm text-text-secondary mb-3">
       @if (playersMin() !== undefined && playersMax() !== undefined) {
-      <span>{{ playersMin() }}–{{ playersMax() }} jugadores</span>
-      } @else {
-      <span class="text-text-muted">Jugadores N/D</span>
+      <span class="inline-flex items-center gap-1">
+        <lucide-icon [img]="iconUsers" class="w-3.5 h-3.5 text-text-muted" />
+        {{ playersMin() }}-{{ playersMax() }} jugadores
+      </span>
       }
 
       @if (duration() !== undefined) {
-      <span>{{ duration() }}m</span>
-      } @else {
-      <span class="text-text-muted">Duración N/D</span>
+      <span class="inline-flex items-center gap-1">
+        <lucide-icon [img]="iconClock" class="w-3.5 h-3.5 text-text-muted" />
+        {{ duration() }}m
+      </span>
       }
-    </p>
+    </div>
 
-    <!-- Acción: ver detalles del juego -->
-    <footer class="pt-3 border-t border-border-subtle flex justify-end">
-      <app-button variant="outlined" color="primary" size="sm">
-        Ver detalles
-      </app-button>
-    </footer>
+    <!-- Stock badge (parte inferior de la card) -->
+    <app-stock-badge [stock]="stock()" />
 
   </section>
 </article>

@@ -1,11 +1,13 @@
 import {
   Component,
   OnInit,
+  DestroyRef,
   inject,
   signal,
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LucideAngularModule, Search, Plus } from 'lucide-angular';
@@ -34,28 +36,19 @@ import type { Game } from './interfaces/game.interface';
 })
 export class GamesPageComponent implements OnInit {
 
-  // ── Inyecciones ───────────────────────────────────────────────────────
   protected readonly gamesService = inject(GamesService);
   private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // ── Iconos Lucide ─────────────────────────────────────────────────────
+  // Iconos Lucide
   protected readonly iconSearch = Search;
   protected readonly iconPlus = Plus;
 
-  // ── Filtros (signals locales) ─────────────────────────────────────────
-
-  /** null = "Todos" los juegos; number = id de la categoría seleccionada */
+  // Filtros locales
   protected readonly selectedCategoryId = signal<number | null>(null);
+  protected readonly searchQuery = signal('');
 
-  /** Texto ingresado en el buscador */
-  protected readonly searchQuery = signal<string>('');
-
-  // ── Lista filtrada (computed) ─────────────────────────────────────────
-
-  /**
-   * Aplica filtros de categoría y búsqueda por nombre.
-   * La búsqueda es case-insensitive y usa includes.
-   */
+  /** Lista filtrada por categoría y búsqueda (case-insensitive) */
   protected readonly filteredGames = computed<Game[]>(() => {
     const games = this.gamesService.games();
     const categoryId = this.selectedCategoryId();
@@ -68,14 +61,10 @@ export class GamesPageComponent implements OnInit {
     });
   });
 
-  // ── Ciclo de vida ─────────────────────────────────────────────────────
-
   ngOnInit(): void {
     this.gamesService.loadGames();
     this.gamesService.loadCategories();
   }
-
-  // ── Handlers de UI ───────────────────────────────────────────────────
 
   selectCategory(categoryId: number | null): void {
     this.selectedCategoryId.set(categoryId);
@@ -86,11 +75,7 @@ export class GamesPageComponent implements OnInit {
     this.searchQuery.set(input.value);
   }
 
-  /**
-   * Abre el dialog de creación de juego.
-   * Pasa las categorías ya cargadas para no hacer una petición extra.
-   * Al cerrar con confirmación (result === true), recarga la lista.
-   */
+  /** Abre el dialog de creación de juego */
   openCreateDialog(): void {
     const data: CreateGameDialogData = {
       categories: this.gamesService.categories(),
@@ -104,7 +89,9 @@ export class GamesPageComponent implements OnInit {
       disableClose: false,
     });
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
       if (confirmed) {
         this.gamesService.loadGames();
       }

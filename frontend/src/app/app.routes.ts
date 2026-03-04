@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // ── Landing page (sin sidebar) ──────────────────────────────────────
+  // Landing page (sin sidebar)
   {
     path: '',
     loadComponent: () =>
@@ -9,7 +9,7 @@ export const routes: Routes = [
     title: '10Minds BoardGames - Inicio',
   },
 
-  // ── Páginas internas (con sidebar + layout shell) ────────────────────
+  // Páginas internas (con sidebar + layout shell)
   {
     path: '',
     loadComponent: () =>
@@ -36,13 +36,13 @@ export const routes: Routes = [
       {
         path: 'categorias',
         loadComponent: () =>
-          import('./features/home/home-page.component').then(m => m.HomePageComponent),
+          import('./features/categories/categories-page.component').then(m => m.CategoriesPageComponent),
         title: '10Minds BoardGames - Categorías',
       },
     ],
   },
 
-  // ── Wildcard ─────────────────────────────────────────────────────────
+  // Wildcard
   {
     path: '**',
     redirectTo: '',

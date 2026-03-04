@@ -1,12 +1,6 @@
-/**
- * Interfaces TypeScript que replican exactamente los tipos del esquema GraphQL del backend.
- * Todos los campos opcionales están marcados con `?` para reflejar los campos nullable de la entidad.
- */
+import type { Category } from '../../categories/interfaces/category.interface';
 
-export interface Category {
-  id: number;
-  name: string;
-}
+export type { Category };
 
 export interface Game {
   id: number;
