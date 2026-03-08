@@ -7,7 +7,8 @@
 
     @if (imageSrc()) {
     <img [src]="imageSrc()" [alt]="'Portada de ' + title()"
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+      loading="lazy" />
     } @else {
     <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300"
       [style.background-color]="fallbackBg()">
@@ -19,15 +20,39 @@
 
     <!-- Chip de categoría (top-left) -->
     <span class="absolute top-3 left-3">
-      <app-chip [label]="category()" [color]="categoryColor()" />
+      <app-chip [label]="category()" [color]="categoryColor()" [solid]="true" />
     </span>
 
     <!-- Botón 3 puntos (top-right) -->
-    <button type="button"
-      class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg bg-canvas/60 hover:bg-canvas/90 text-white transition-colors"
-      aria-label="Más acciones">
-      <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
-    </button>
+    <div class="absolute top-3 right-3">
+      <button type="button"
+        class="w-7 h-7 flex items-center justify-center rounded-lg bg-black/50 hover:bg-black/80 text-white transition-colors"
+        aria-label="Más acciones" (click)="toggleMenu($event)">
+        <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
+      </button>
+
+      @if (menuOpen()) {
+      <!-- Overlay invisible para cerrar el menú al hacer click afuera -->
+      <div class="fixed inset-0 z-10" (click)="closeMenu()"></div>
+
+      <!-- Menú desplegable -->
+      <div
+        class="absolute right-0 top-9 z-20 min-w-36 rounded-xl bg-surface border border-border-default shadow-xl py-1">
+        <button type="button"
+          class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-text-primary hover:bg-subtle/50 transition-colors"
+          (click)="onEdit($event)">
+          <lucide-icon [img]="iconPencil" class="w-4 h-4 text-text-secondary" />
+          Editar
+        </button>
+        <button type="button"
+          class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-danger hover:bg-danger/10 transition-colors"
+          (click)="onDelete($event)">
+          <lucide-icon [img]="iconTrash" class="w-4 h-4" />
+          Eliminar
+        </button>
+      </div>
+      }
+    </div>
 
   </figure>
 
@@ -38,7 +63,7 @@
     <div class="flex items-center justify-between gap-2 mb-2">
       <h3 class="text-base font-bold text-text-primary truncate">{{ title() }}</h3>
       <span
-        class="shrink-0 text-xs font-semibold text-warning bg-warning/10 border border-warning/25 px-2.5 py-0.5 rounded-lg whitespace-nowrap">
+        class="shrink-0 text-xs font-bold text-black bg-warning border border-amber-600 px-2.5 py-0.5 rounded-lg whitespace-nowrap">
         Bs {{ price() | number:'1.2-2' }}/día
       </span>
     </div>

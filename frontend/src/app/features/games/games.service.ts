@@ -2,9 +2,9 @@ import { Injectable, signal, computed } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Observable, take } from 'rxjs';
 import type { ChipColor } from '../../shared/components/chip/chip.component';
-import { GET_GAMES, CREATE_GAME } from '../../graphql/games.graphql';
+import { GET_GAMES, CREATE_GAME, UPDATE_GAME, REMOVE_GAME } from '../../graphql/games.graphql';
 import { GET_CATEGORIES } from '../../graphql/categories.graphql';
-import type { Category, CreateGamePayload, Game } from './interfaces/game.interface';
+import type { Category, CreateGamePayload, UpdateGamePayload, Game } from './interfaces/game.interface';
 
 interface GetGamesResponse { games: Game[] }
 interface GetCategoriesResponse { categories: Category[] }
@@ -80,6 +80,22 @@ export class GamesService {
     return this.apollo.mutate({
       mutation: CREATE_GAME,
       variables: { input: payload },
+    });
+  }
+
+  /** Actualiza un juego existente */
+  updateGame(payload: UpdateGamePayload): Observable<unknown> {
+    return this.apollo.mutate({
+      mutation: UPDATE_GAME,
+      variables: { input: payload },
+    });
+  }
+
+  /** Elimina (soft-remove) un juego por id */
+  deleteGame(id: number): Observable<unknown> {
+    return this.apollo.mutate({
+      mutation: REMOVE_GAME,
+      variables: { id },
     });
   }
 

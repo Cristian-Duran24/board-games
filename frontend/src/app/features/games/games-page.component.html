@@ -25,8 +25,8 @@
       <button type="button"
         class="px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer"
         [class]="selectedCategoryId() === null
-          ? 'bg-primary text-white border-primary'
-          : 'bg-transparent text-text-secondary border-border-default hover:border-primary hover:text-text-primary'"
+          ? 'bg-subtle text-text-primary border-subtle'
+          : 'bg-transparent text-text-secondary border-border-default hover:border-subtle hover:text-text-primary hover:bg-subtle/40'"
         (click)="selectCategory(null)">
         Todos
       </button>
@@ -35,8 +35,8 @@
         <button type="button"
           class="px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer"
           [class]="selectedCategoryId() === cat.id
-            ? 'bg-primary text-white border-primary'
-            : 'bg-transparent text-text-secondary border-border-default hover:border-primary hover:text-text-primary'"
+            ? 'bg-subtle text-text-primary border-subtle'
+            : 'bg-transparent text-text-secondary border-border-default hover:border-subtle hover:text-text-primary hover:bg-subtle/40'"
           (click)="selectCategory(cat.id)">
           {{ cat.name }}
         </button>
@@ -103,7 +103,9 @@
           [playersMax]="game.playersMax"
           [duration]="game.duration"
           [fallbackColorIndex]="game.id"
-          [categoryColor]="gamesService.getCategoryColor(game.category.id)" />
+          [categoryColor]="gamesService.getCategoryColor(game.category.id)"
+          (editClicked)="openEditDialog(game)"
+          (deleteClicked)="openDeleteDialog(game)" />
       }
     </div>
   }

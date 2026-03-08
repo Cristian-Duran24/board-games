@@ -10,6 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LucideAngularModule, Search, Plus } from 'lucide-angular';
 
 import { GamesService } from './games.service';
@@ -19,6 +20,14 @@ import {
   CreateGameDialogComponent,
   type CreateGameDialogData,
 } from './create-game-dialog/create-game-dialog.component';
+import {
+  EditGameDialogComponent,
+  type EditGameDialogData,
+} from './edit-game-dialog/edit-game-dialog.component';
+import {
+  ConfirmDialogComponent,
+  type ConfirmDialogData,
+} from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Game } from './interfaces/game.interface';
 
 @Component({
@@ -28,6 +37,7 @@ import type { Game } from './interfaces/game.interface';
   imports: [
     MatDialogModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
     LucideAngularModule,
     GameCardComponent,
     ButtonComponent,
@@ -38,6 +48,7 @@ export class GamesPageComponent implements OnInit {
 
   protected readonly gamesService = inject(GamesService);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
   // Iconos Lucide
@@ -96,5 +107,62 @@ export class GamesPageComponent implements OnInit {
         this.gamesService.loadGames();
       }
     });
+  }
+
+  /** Abre el dialog de edición de juego */
+  openEditDialog(game: Game): void {
+    const data: EditGameDialogData = {
+      game,
+      categories: this.gamesService.categories(),
+    };
+
+    const dialogRef = this.dialog.open(EditGameDialogComponent, {
+      data,
+      width: '640px',
+      maxWidth: '95vw',
+      panelClass: ['game-dialog'],
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.gamesService.loadGames();
+        }
+      });
+  }
+
+  /** Abre dialog de confirmación y elimina el juego si se confirma */
+  openDeleteDialog(game: Game): void {
+    const data: ConfirmDialogData = {
+      title: 'Eliminar juego',
+      message: `¿Estás seguro de que quieres eliminar "${game.title}"? Esta acción no se puede deshacer.`,
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data,
+      width: '420px',
+      maxWidth: '95vw',
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.gamesService.deleteGame(game.id).subscribe({
+            next: () => {
+              this.snackBar.open('Juego eliminado correctamente.', 'Cerrar', { duration: 3000 });
+              this.gamesService.loadGames();
+            },
+            error: (err: Error) => {
+              this.snackBar.open(err.message ?? 'Error al eliminar el juego.', 'Cerrar', { duration: 4000 });
+            },
+          });
+        }
+      });
   }
 }

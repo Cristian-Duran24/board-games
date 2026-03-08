@@ -4,7 +4,6 @@ import { LucideAngularModule, Menu, ChevronDown } from 'lucide-angular';
 import { SidebarComponent } from '../layout/sidebar/sidebar.component';
 
 /**
- * Shell de layout para las páginas internas de la aplicación.
  * Incluye el sidebar izquierdo fijo + el área de contenido con scroll propio.
  * La ruta raíz (home/landing) no usa este layout.
  */

@@ -26,3 +26,16 @@ export interface CreateGamePayload {
   playersMax?: number;
   duration?: number;
 }
+
+/** Payload para la mutación UpdateGame: todos los campos opcionales salvo id */
+export interface UpdateGamePayload {
+  id: number;
+  title?: string;
+  categoryId?: number;
+  price?: number;
+  inTotal?: number;
+  image?: string;
+  playersMin?: number;
+  playersMax?: number;
+  duration?: number;
+}

@@ -1,6 +1,6 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { LucideAngularModule, Users, Clock, MoreVertical } from 'lucide-angular';
+import { LucideAngularModule, Users, Clock, MoreVertical, Pencil, Trash2 } from 'lucide-angular';
 import { ChipComponent, type ChipColor } from '../chip/chip.component';
 import { StockBadgeComponent } from '../stock-badge/stock-badge.component';
 
@@ -60,4 +60,35 @@ export class GameCardComponent {
   protected readonly iconUsers = Users;
   protected readonly iconClock = Clock;
   protected readonly iconMoreVertical = MoreVertical;
+
+  // Outputs para que la página padre maneje la acción
+  readonly editClicked = output<void>();
+  readonly deleteClicked = output<void>();
+
+  // Estado local del menú desplegable
+  protected readonly menuOpen = signal(false);
+
+  protected readonly iconPencil = Pencil;
+  protected readonly iconTrash = Trash2;
+
+  toggleMenu(event: MouseEvent): void {
+    event.stopPropagation();   // evita que el click cierre el menú inmediatamente
+    this.menuOpen.update(v => !v);
+  }
+
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  onEdit(event: MouseEvent): void {
+    event.stopPropagation();
+    this.menuOpen.set(false);
+    this.editClicked.emit();
+  }
+
+  onDelete(event: MouseEvent): void {
+    event.stopPropagation();
+    this.menuOpen.set(false);
+    this.deleteClicked.emit();
+  }
 }

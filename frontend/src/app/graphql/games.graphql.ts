@@ -47,3 +47,31 @@ export const CREATE_GAME = gql`
     }
   }
 `;
+
+export const UPDATE_GAME = gql`
+  mutation UpdateGame($input: UpdateGameInput!) {
+    updateGame(updateGameInput: $input) {
+      id
+      title
+      price
+      inTotal
+      inStock
+      image
+      playersMin
+      playersMax
+      duration
+      category {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const REMOVE_GAME = gql`
+  mutation RemoveGame($id: Int!) {
+    removeGame(id: $id) {
+      id
+    }
+  }
+`;
