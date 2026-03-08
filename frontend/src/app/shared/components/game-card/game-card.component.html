@@ -1,47 +1,92 @@
-<!-- Card de juego: imagen, categoría, título, jugadores, precio/día y stock -->
-<article class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer">
+<!-- Card de juego — Diseño fiel al prototipo -->
+<article
+  class="bg-surface rounded-2xl overflow-hidden border border-border-default hover:border-primary/60 transition-all duration-200 group cursor-pointer">
 
-  <!-- Imagen de portada del juego -->
+  <!-- ── Área de imagen ── -->
   <figure class="relative h-48 overflow-hidden bg-subtle/30">
-    <img
-      [src]="image()"
-      [alt]="'Portada de ' + titulo()"
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-      loading="lazy"
-    />
-    <!-- Badge de stock superpuesto sobre la imagen -->
-    <span class="absolute top-3 right-3">
-      <app-stock-badge [stock]="stockDisponible()" />
-    </span>
-    <!-- Chip de categoría superpuesto sobre la imagen -->
+
+    @if (imageSrc()) {
+    <img [src]="imageSrc()" [alt]="'Portada de ' + title()"
+      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+      loading="lazy" />
+    } @else {
+    <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300"
+      [style.background-color]="fallbackBg()">
+      <span class="text-5xl font-black text-white/80 select-none tracking-tight">
+        {{ initials() }}
+      </span>
+    </div>
+    }
+
+    <!-- Chip de categoría (top-left) -->
     <span class="absolute top-3 left-3">
-      <app-chip [label]="category()" [color]="categoryColor()" />
+      <app-chip [label]="category()" [color]="categoryColor()" [solid]="true" />
     </span>
+
+    <!-- Botón 3 puntos (top-right) -->
+    <div class="absolute top-3 right-3">
+      <button type="button"
+        class="w-7 h-7 flex items-center justify-center rounded-lg bg-black/50 hover:bg-black/80 text-white transition-colors"
+        aria-label="Más acciones" (click)="toggleMenu($event)">
+        <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
+      </button>
+
+      @if (menuOpen()) {
+      <!-- Overlay invisible para cerrar el menú al hacer click afuera -->
+      <div class="fixed inset-0 z-10" (click)="closeMenu()"></div>
+
+      <!-- Menú desplegable -->
+      <div
+        class="absolute right-0 top-9 z-20 min-w-36 rounded-xl bg-surface border border-border-default shadow-xl py-1">
+        <button type="button"
+          class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-text-primary hover:bg-subtle/50 transition-colors"
+          (click)="onEdit($event)">
+          <lucide-icon [img]="iconPencil" class="w-4 h-4 text-text-secondary" />
+          Editar
+        </button>
+        <button type="button"
+          class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-danger hover:bg-danger/10 transition-colors"
+          (click)="onDelete($event)">
+          <lucide-icon [img]="iconTrash" class="w-4 h-4" />
+          Eliminar
+        </button>
+      </div>
+      }
+    </div>
+
   </figure>
 
-  <!-- Contenido informativo del juego -->
-  <section class="p-4" aria-label="Información del juego">
+  <!-- ── Contenido informativo ── -->
+  <section class="px-4 pt-4 pb-3" aria-label="Información del juego">
 
-    <!-- Precio por día (destacado) -->
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-bold text-text-primary truncate pr-2">{{ titulo() }}</h3>
-      <span class="shrink-0 text-sm font-semibold text-warning bg-warning/10 border border-warning/25 px-2 py-0.5 rounded-lg">
-        Bs {{ precio() }}/día
+    <!-- Título + Precio -->
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <h3 class="text-base font-bold text-text-primary truncate">{{ title() }}</h3>
+      <span
+        class="shrink-0 text-xs font-bold text-black bg-warning border border-amber-600 px-2.5 py-0.5 rounded-lg whitespace-nowrap">
+        Bs {{ price() | number:'1.2-2' }}/día
       </span>
     </div>
 
     <!-- Metadatos: jugadores y duración -->
-    <p class="text-text-secondary text-sm flex items-center gap-3 mb-4">
-      <span>{{ jugadoresMin() }}–{{ jugadoresMax() }} jugadores</span>
-      <span>{{ duracion() }}m</span>
-    </p>
+    <div class="flex items-center gap-4 text-sm text-text-secondary mb-3">
+      @if (playersMin() !== undefined && playersMax() !== undefined) {
+      <span class="inline-flex items-center gap-1">
+        <lucide-icon [img]="iconUsers" class="w-3.5 h-3.5 text-text-muted" />
+        {{ playersMin() }}-{{ playersMax() }} jugadores
+      </span>
+      }
 
-    <!-- Acción: ver detalles del juego -->
-    <footer class="pt-3 border-t border-border-subtle flex justify-end">
-      <app-button variant="outlined" color="primary" size="sm">
-        Ver detalles
-      </app-button>
-    </footer>
+      @if (duration() !== undefined) {
+      <span class="inline-flex items-center gap-1">
+        <lucide-icon [img]="iconClock" class="w-3.5 h-3.5 text-text-muted" />
+        {{ duration() }}m
+      </span>
+      }
+    </div>
+
+    <!-- Stock badge (parte inferior de la card) -->
+    <app-stock-badge [stock]="stock()" />
 
   </section>
 </article>

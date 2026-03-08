@@ -35,8 +35,20 @@ export class Game {
   @Field(() => Float)
   price: number;
 
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  playersMin?: number;
+
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  playersMax?: number;
+
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  duration?: number;
+
   @OneToMany(() => Loan, (loan) => loan.game)
-  loans: Loan[]; 
+  loans: Loan[];
 
   @DeleteDateColumn()
   deletedAt?: Date;

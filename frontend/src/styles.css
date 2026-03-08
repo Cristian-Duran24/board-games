@@ -58,3 +58,121 @@
   --color-button-filled-primary: #1D6AE5;
   --color-button-filled-success: #16A34A;
 }
+
+/* ============================================================
+  RESET GLOBAL
+  Previene parpadeo blanco antes de que Material aplique sus CSS custom properties
+   ============================================================ */
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+  ANGULAR MATERIAL
+  Las mapeamos a nuestros tokens de Tailwind del @theme
+   ============================================================ */
+html,
+body {
+  /* Colores primarios */
+  --mat-sys-primary:                   var(--color-primary);
+  --mat-sys-on-primary:                #ffffff;
+  --mat-sys-primary-container:         rgba(59, 130, 246, 0.15);
+  --mat-sys-on-primary-container:      var(--color-primary);
+
+  /* Superficies */
+  --mat-sys-surface:                   var(--color-surface);
+  --mat-sys-on-surface:                var(--color-text-primary);
+  --mat-sys-on-surface-variant:        var(--color-text-secondary);
+  --mat-sys-surface-container:         var(--color-subtle);
+  --mat-sys-surface-container-high:    var(--color-border-default);
+  --mat-sys-surface-container-highest: var(--color-border-subtle);
+  --mat-sys-background:                var(--color-canvas);
+  --mat-sys-on-background:             var(--color-text-primary);
+
+  /* Errores y feedback */
+  --mat-sys-error:                     var(--color-danger);
+  --mat-sys-on-error:                  #ffffff;
+  --mat-sys-error-container:           var(--color-bg-danger);
+  --mat-sys-on-error-container:        var(--color-danger);
+
+  /* Bordes y outlines */
+  --mat-sys-outline:                   var(--color-border-default);
+  --mat-sys-outline-variant:           var(--color-border-subtle);
+
+  /* Dialog */
+  --mat-dialog-container-color:        var(--color-surface);
+
+  /* Snackbar */
+  --mat-snack-bar-button-color:        var(--color-primary);
+
+  /* Progress spinner */
+  --mat-progress-spinner-active-indicator-color: var(--color-primary);
+
+  /* Modo oscuro explícito */
+  color-scheme: dark;
+}
+
+/* ============================================================
+  UTILIDADES PERSONALIZADAS (Tailwind CSS 4 @utility)
+   ============================================================ */
+
+/* Input estilizado con tokens del design system */
+@utility input-field {
+  @apply w-full bg-surface border border-border-default rounded-2xl px-4 py-3
+        text-text-primary placeholder:text-text-muted
+        focus:outline-none focus:border-primary transition-all;
+}
+
+/* Label de formulario */
+@utility form-label {
+  @apply block text-sm font-medium text-text-secondary mb-1.5;
+}
+
+/* ============================================================
+  SIDEBAR — Estado activo del enlace de navegación
+  routerLinkActive aplica la clase .active-link
+   ============================================================ */
+.active-link {
+  background-color: var(--color-primary);
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* ============================================================
+  DIALOG — Forzar fondo oscuro del panel (cdk-overlay)
+   ============================================================ */
+.cdk-overlay-pane {
+  max-width: 95vw !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--color-surface) !important;
+  border-radius: 1rem !important;
+  border: 1px solid var(--color-border-subtle) !important;
+}
+
+.cdk-overlay-dark-backdrop {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ============================================================
+  SNACKBAR — Fondo oscuro
+   ============================================================ */
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--color-subtle) !important;
+}
+
+/* ============================================================
+  NUMBER INPUT — Ocultar flechas de spin en Firefox y Chrome
+   ============================================================ */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

@@ -34,6 +34,9 @@ type Game {
   inStock: Int!
   image: String
   price: Float!
+  playersMin: Int
+  playersMax: Int
+  duration: Int
 }
 
 type Category {
@@ -85,6 +88,9 @@ input CreateGameInput {
   inTotal: Int!
   image: String
   price: Float!
+  playersMin: Int
+  playersMax: Int
+  duration: Int
 }
 
 input UpdateGameInput {
@@ -93,6 +99,9 @@ input UpdateGameInput {
   inTotal: Int
   image: String
   price: Float
+  playersMin: Int
+  playersMax: Int
+  duration: Int
   id: Int!
 }
 

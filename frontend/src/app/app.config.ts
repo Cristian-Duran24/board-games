@@ -9,8 +9,9 @@ import { routes } from './app.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    // provideZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     provideRouter(routes),
+    // provideAnimationsAsync() incompatible con modo zoneless (Zone.js no está activo).
     provideHttpClient(),
     provideApollo(() => {
       const httpLink = inject(HttpLink);
@@ -21,3 +22,5 @@ export const appConfig: ApplicationConfig = {
     }),
   ]
 };
+
+
