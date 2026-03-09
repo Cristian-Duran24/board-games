@@ -7,13 +7,10 @@ import { Component, input, computed } from '@angular/core';
   templateUrl: './stock-badge.component.html'
 })
 export class StockBadgeComponent {
-  // --- Input requerido: recibe el stock actual del juego ---
   readonly stock = input.required<number>();
 
-  // --- Computed: determina si hay stock disponible ---
   protected readonly isAvailable = computed(() => this.stock() > 0);
 
-  // Muestra el número exacto si hay stock: "3 disponibles"
   protected readonly label = computed(() =>
     this.isAvailable()
       ? `● ${this.stock()} disponible${this.stock() > 1 ? 's' : ''}`
@@ -23,7 +20,7 @@ export class StockBadgeComponent {
   protected readonly computedClasses = computed(() => {
     const base = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border';
     return this.isAvailable()
-      ? `${base} bg-chip-green-bg text-chip-green border-chip-green-border`
-      : `${base} bg-chip-red-bg   text-chip-red   border-chip-red-border`;
+      ? `${base} bg-chip-green/10 text-chip-green border-chip-green/25`
+      : `${base} bg-chip-red/10   text-chip-red   border-chip-red/25`;
   });
 }

@@ -30,7 +30,7 @@ export const routes: Routes = [
       {
         path: 'clientes',
         loadComponent: () =>
-          import('./features/home/home-page.component').then(m => m.HomePageComponent),
+          import('./features/clients/clients-page.component').then(m => m.ClientsPageComponent),
         title: '10Minds BoardGames - Clientes',
       },
       {

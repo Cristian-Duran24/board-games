@@ -1,10 +1,5 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -37,10 +32,8 @@ export class EditGameDialogComponent implements OnInit {
   readonly dialogData = inject<EditGameDialogData>(MAT_DIALOG_DATA);
   private readonly gamesService = inject(GamesService);
   private readonly snackBar = inject(MatSnackBar);
-
   protected readonly iconClose = X;
   protected readonly iconImage = Image;
-
   protected readonly submitting = signal(false);
   /** Preview de la imagen: comienza con la existente si la hay */
   protected readonly imagePreview = signal<string | null>(null);

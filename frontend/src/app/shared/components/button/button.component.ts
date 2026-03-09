@@ -1,5 +1,4 @@
 import { Component, input, computed, output } from '@angular/core';
-
 export type ButtonVariant = 'filled' | 'outlined' | 'text';
 export type ButtonColor = 'primary' | 'success' | 'danger' | 'secondary';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -11,19 +10,15 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   templateUrl: './button.component.html'
 })
 export class ButtonComponent {
-  // --- Inputs (API pública del componente) ---
   readonly variant = input<ButtonVariant>('filled');
   readonly color = input<ButtonColor>('primary');
   readonly size = input<ButtonSize>('md');
   readonly disabled = input<boolean>(false);
   readonly type = input<'button' | 'submit' | 'reset'>('button');
 
-  // --- Output para manejar el click desde el padre ---
   readonly clicked = output<MouseEvent>();
 
-  // --- Computed: genera clases usando tokens de Tailwind definidos en @theme ---
   protected readonly computedClasses = computed(() => {
-    // Tamaños: usan utilidades estándar de Tailwind
     const sizes: Record<ButtonSize, string> = {
       sm: 'px-4 py-2 text-sm rounded-xl gap-1.5',
       md: 'px-6 py-3 text-base rounded-2xl gap-2',
@@ -32,22 +27,22 @@ export class ButtonComponent {
 
     const styles: Record<ButtonVariant, Record<ButtonColor, string>> = {
       filled: {
-        primary: 'bg-button-filled-primary   text-white hover:bg-primary',
-        success: 'bg-button-filled-success   text-white hover:bg-success',
-        danger: 'bg-danger   text-white hover:bg-red-700',
-        secondary: 'bg-secondary text-white hover:bg-slate-700',
+        primary:   'bg-button-filled-primary   text-white hover:bg-primary',
+        success:   'bg-button-filled-success   text-white hover:bg-success',
+        danger:    'bg-button-filled-danger    text-white hover:bg-danger',
+        secondary: 'bg-button-filled-secondary text-white hover:bg-subtle',
       },
       outlined: {
-        primary: 'border-2 border-primary   text-primary   hover:bg-primary/10',
-        success: 'border-2 border-success   text-success   hover:bg-success/10',
-        danger: 'border-2 border-danger    text-danger    hover:bg-danger/10',
-        secondary: 'border-2 border-subtle    text-text-secondary hover:bg-subtle/20',
+        primary:   'border-2 border-button-outlined-primary-border   text-button-text-primary   hover:bg-primary/10',
+        success:   'border-2 border-button-outlined-success-border   text-button-text-success   hover:bg-success/10',
+        danger:    'border-2 border-button-outlined-danger-border    text-button-text-danger    hover:bg-danger/10',
+        secondary: 'border-2 border-button-outlined-secondary-border text-button-text-secondary hover:bg-subtle/20',
       },
       text: {
-        primary: 'text-primary   hover:bg-primary/10',
-        success: 'text-success   hover:bg-success/10',
-        danger: 'text-danger    hover:bg-danger/10',
-        secondary: 'text-text-secondary hover:bg-subtle/20',
+        primary:   'text-button-text-primary   hover:bg-primary/10',
+        success:   'text-button-text-success   hover:bg-success/10',
+        danger:    'text-button-text-danger    hover:bg-danger/10',
+        secondary: 'text-button-text-secondary hover:bg-subtle/20',
       },
     };
 

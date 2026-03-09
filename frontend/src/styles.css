@@ -25,59 +25,61 @@
   --color-secondary: #1B273B;
 
   /* Borders */
-  --color-border-default: #475569;
-  --color-border-subtle: #334155;
-  --color-border-brand: #3B82F6;
+  --color-border-default: #334155;
+  --color-border-subtle: #1B273B;
+  --color-border-brand: #004C58;
 
   /* === Chips === */
-  --color-chip-blue: #60A5FA;
-  --color-chip-blue-bg: rgba(59, 130, 246, 0.1);
-  --color-chip-blue-border: rgba(59, 130, 246, 0.25);
-
-  --color-chip-green: #22C55E;
-  --color-chip-green-bg: rgba(34, 197, 94, 0.1);
-  --color-chip-green-border: rgba(34, 197, 94, 0.25);
-
-  --color-chip-red: #D64545;
-  --color-chip-red-bg: rgba(214, 69, 69, 0.1);
-  --color-chip-red-border: rgba(214, 69, 69, 0.25);
-
-  --color-chip-yellow: #EAB308;
-  --color-chip-yellow-bg: rgba(234, 179, 8, 0.1);
-  --color-chip-yellow-border: rgba(234, 179, 8, 0.25);
-
-  --color-chip-indigo: #6366F1;
-  --color-chip-indigo-bg: rgba(99, 102, 241, 0.1);
-  --color-chip-indigo-border: rgba(99, 102, 241, 0.25);
-
+  --color-chip-blue:     #60A5FA;
+  --color-chip-green:    #22C55E;
+  --color-chip-red:      #D64545;
+  --color-chip-yellow:   #EAB308;
+  --color-chip-indigo:   #6366F1;
   --color-chip-disabled: #64748B;
-  --color-chip-disabled-bg: rgba(100, 116, 139, 0.1);
-  --color-chip-disabled-border: rgba(100, 116, 139, 0.25);
 
   /* === Buttons === */
   --color-button-filled-primary: #1D6AE5;
+  --color-button-filled-secondary: #1B273B;
   --color-button-filled-success: #16A34A;
+  --color-button-filled-danger: #D64545;
+
+  --color-button-outlined-primary-border: #3B82F6;  /* Añadido para border */
+  --color-button-outlined-secondary-border: #334155;
+  --color-button-outlined-success-border: #16A34A;
+  --color-button-outlined-danger-border: #D64545;
+
+  --color-button-text-primary: #3B82F6;      /* Añadido, sin border */
+  --color-button-text-secondary: #94A3B8;
+  --color-button-text-success: #16A34A;
+  --color-button-text-danger: #D64545;
 }
 
 /* ============================================================
-  RESET GLOBAL
-  Previene parpadeo blanco antes de que Material aplique sus CSS custom properties
+  BASE STYLES (Tailwind)
    ============================================================ */
-body {
-  background-color: var(--color-canvas);
-  color: var(--color-text-primary);
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    color-scheme: dark;
+  }
 }
 
 /* ============================================================
   ANGULAR MATERIAL
-  Las mapeamos a nuestros tokens de Tailwind del @theme
+  Mapeo de variables del sistema Material a tokens del design system
    ============================================================ */
-html,
-body {
+:root {
   /* Colores primarios */
   --mat-sys-primary:                   var(--color-primary);
   --mat-sys-on-primary:                #ffffff;
-  --mat-sys-primary-container:         rgba(59, 130, 246, 0.15);
+  --mat-sys-primary-container:         var(--color-chip-blue-bg);
   --mat-sys-on-primary-container:      var(--color-primary);
 
   /* Superficies */
@@ -96,6 +98,11 @@ body {
   --mat-sys-error-container:           var(--color-bg-danger);
   --mat-sys-on-error-container:        var(--color-danger);
 
+  --mat-sys-warning:                   var(--color-warning);
+  --mat-sys-on-warning:                #ffffff;
+  --mat-sys-warning-container:         var(--color-bg-warning);
+  --mat-sys-on-warning-container:      var(--color-warning);
+
   /* Bordes y outlines */
   --mat-sys-outline:                   var(--color-border-default);
   --mat-sys-outline-variant:           var(--color-border-subtle);
@@ -109,8 +116,18 @@ body {
   /* Progress spinner */
   --mat-progress-spinner-active-indicator-color: var(--color-primary);
 
-  /* Modo oscuro explícito */
-  color-scheme: dark;
+  /* Table */
+  --mat-table-background-color:               var(--color-surface);
+  --mat-table-header-headline-color:          var(--color-text-secondary);
+  --mat-table-row-item-label-text-color:      var(--color-text-primary);
+  --mat-table-row-item-outline-color:         var(--color-border-default);
+  --mat-table-footer-supporting-text-color:   var(--color-text-secondary);
+
+  /* Paginator */
+  --mat-paginator-container-background-color: var(--color-surface);
+  --mat-paginator-container-text-color:       var(--color-text-secondary);
+  --mat-paginator-enabled-icon-color:         var(--color-text-secondary);
+  --mat-paginator-disabled-icon-color:        var(--color-text-muted);
 }
 
 /* ============================================================
@@ -131,36 +148,10 @@ body {
 
 /* ============================================================
   SIDEBAR — Estado activo del enlace de navegación
-  routerLinkActive aplica la clase .active-link
+  routerLinkActive aplica la utility class active-link
    ============================================================ */
-.active-link {
-  background-color: var(--color-primary);
-  color: #fff !important;
-  font-weight: 600;
-}
-
-/* ============================================================
-  DIALOG — Forzar fondo oscuro del panel (cdk-overlay)
-   ============================================================ */
-.cdk-overlay-pane {
-  max-width: 95vw !important;
-}
-
-.mat-mdc-dialog-container .mdc-dialog__surface {
-  background-color: var(--color-surface) !important;
-  border-radius: 1rem !important;
-  border: 1px solid var(--color-border-subtle) !important;
-}
-
-.cdk-overlay-dark-backdrop {
-  background-color: rgba(0, 0, 0, 0.6) !important;
-}
-
-/* ============================================================
-  SNACKBAR — Fondo oscuro
-   ============================================================ */
-.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  background-color: var(--color-subtle) !important;
+@utility active-link {
+  @apply bg-primary! text-text-inverse! font-semibold;
 }
 
 /* ============================================================

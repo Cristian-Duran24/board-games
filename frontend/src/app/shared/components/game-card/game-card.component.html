@@ -26,7 +26,7 @@
     <!-- Botón 3 puntos (top-right) -->
     <div class="absolute top-3 right-3">
       <button type="button"
-        class="w-7 h-7 flex items-center justify-center rounded-lg bg-black/50 hover:bg-black/80 text-white transition-colors"
+        class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface hover:bg-subtle text-text-secondary transition-colors"
         aria-label="Más acciones" (click)="toggleMenu($event)">
         <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
       </button>
@@ -63,7 +63,7 @@
     <div class="flex items-center justify-between gap-2 mb-2">
       <h3 class="text-base font-bold text-text-primary truncate">{{ title() }}</h3>
       <span
-        class="shrink-0 text-xs font-bold text-black bg-warning border border-amber-600 px-2.5 py-0.5 rounded-lg whitespace-nowrap">
+        class="shrink-0 text-xs font-bold text-black bg-chip-yellow border border-chip-yellow/70 px-2.5 py-0.5 rounded-lg whitespace-nowrap">
         Bs {{ price() | number:'1.2-2' }}/día
       </span>
     </div>

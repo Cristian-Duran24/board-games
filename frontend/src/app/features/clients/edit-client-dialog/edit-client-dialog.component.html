@@ -1,0 +1,80 @@
+<!-- Cabecera del dialog -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-border-subtle">
+  <h2 class="text-xl font-bold text-text-primary">Editar Cliente</h2>
+  <button type="button"
+    class="text-text-muted hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-subtle/30"
+    (click)="onCancel()" aria-label="Cerrar">
+    <lucide-icon [img]="iconClose" class="w-5 h-5" />
+  </button>
+</div>
+
+<!-- Formulario -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="px-6 py-5 flex flex-col gap-4">
+
+    <!-- Nombre -->
+    <div>
+      <label class="form-label" for="e-name">Nombre completo *</label>
+      <input id="e-name" formControlName="name" type="text"
+        class="input-field"
+        placeholder="Ej: Juan Pérez"
+        autocomplete="off" />
+      @if (form.get('name')?.errors?.['required'] && form.get('name')?.touched) {
+        <p class="text-danger text-xs mt-1">El nombre es obligatorio</p>
+      }
+      @if (form.get('name')?.errors?.['minlength'] && form.get('name')?.touched) {
+        <p class="text-danger text-xs mt-1">Mínimo 4 caracteres</p>
+      }
+    </div>
+
+    <!-- Celular -->
+    <div>
+      <label class="form-label" for="e-phone">Celular *</label>
+      <input id="e-phone" formControlName="phone" type="tel"
+        class="input-field"
+        placeholder="+59167000000"
+        autocomplete="off" />
+      @if (form.get('phone')?.errors?.['required'] && form.get('phone')?.touched) {
+        <p class="text-danger text-xs mt-1">El celular es obligatorio</p>
+      }
+      @if (form.get('phone')?.errors?.['pattern'] && form.get('phone')?.touched) {
+        <p class="text-danger text-xs mt-1">Formato requerido: +591 6XXXXXXX o +591 7XXXXXXX</p>
+      }
+    </div>
+
+    <!-- Email (opcional) -->
+    <div>
+      <label class="form-label" for="e-email">Correo electrónico (opcional)</label>
+      <input id="e-email" formControlName="email" type="email"
+        class="input-field"
+        placeholder="cliente@email.com"
+        autocomplete="off" />
+      @if (form.get('email')?.errors?.['email'] && form.get('email')?.touched) {
+        <p class="text-danger text-xs mt-1">Correo electrónico inválido</p>
+      }
+    </div>
+
+  </div>
+
+  <!-- Pie del dialog -->
+  <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-subtle">
+    <button type="button"
+      class="px-5 py-2.5 rounded-xl text-sm font-medium text-text-secondary border border-border-default hover:bg-subtle/30 transition-colors cursor-pointer"
+      (click)="onCancel()" [disabled]="submitting()">
+      Cancelar
+    </button>
+    <button type="submit"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors cursor-pointer"
+      [class.bg-button-filled-primary]="!submitting()"
+      [class.bg-button-filled-primary/50]="submitting()"
+      [class.cursor-not-allowed]="submitting()"
+      [disabled]="form.invalid || submitting()">
+      @if (submitting()) {
+        <mat-spinner diameter="16" />
+        <span>Guardando...</span>
+      } @else {
+        <span>Guardar cambios</span>
+      }
+    </button>
+  </div>
+</form>

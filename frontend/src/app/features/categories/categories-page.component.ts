@@ -1,27 +1,14 @@
-import {
-  Component,
-  OnInit,
-  DestroyRef,
-  inject,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LucideAngularModule, Plus, Pencil, Trash2, Tag } from 'lucide-angular';
-
 import { CategoriesService } from './categories.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CreateCategoryDialogComponent } from './create-category-dialog/create-category-dialog.component';
-import {
-  EditCategoryDialogComponent,
-  type EditCategoryDialogData,
-} from './edit-category-dialog/edit-category-dialog.component';
-import {
-  ConfirmDialogComponent,
-  type ConfirmDialogData,
-} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { EditCategoryDialogComponent, type EditCategoryDialogData } from './edit-category-dialog/edit-category-dialog.component';
+import { ConfirmDialogComponent, type ConfirmDialogData } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Category } from './interfaces/category.interface';
 
 @Component({
@@ -48,7 +35,7 @@ export class CategoriesPageComponent implements OnInit {
   protected readonly iconPlus = Plus;
   protected readonly iconPencil = Pencil;
   protected readonly iconTrash = Trash2;
-  protected readonly iconTag = Tag;
+  // protected readonly iconTag = Tag;
 
   ngOnInit(): void {
     this.categoriesService.loadCategories();
