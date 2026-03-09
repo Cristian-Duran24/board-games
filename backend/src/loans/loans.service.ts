@@ -154,14 +154,14 @@ export class LoansService {
     return this.loansRepository.find({
       take: limit,
       skip: offset,
-      relations: ['game', 'client'] // Asegurar relations aquí para findAll
+      relations: ['game', 'game.category', 'client']
     });
   }
 
   async findOne(id: number): Promise<Loan> {
     const loan = await this.loansRepository.findOne({
       where: { id },
-      relations: ['game', 'client']
+      relations: ['game', 'game.category', 'client']
     });
     if (!loan) throw new NotFoundException(`Loan with id "${id}" not found`);
     return loan;

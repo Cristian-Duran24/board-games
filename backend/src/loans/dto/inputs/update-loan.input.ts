@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { CreateLoanInput } from './create-loan.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 import { LoanStatus } from '../../enums/loan-status.enum';
@@ -10,7 +10,7 @@ export class UpdateLoanInput extends PartialType(CreateLoanInput) {
   id: number;
 
   @Field(() => LoanStatus, { nullable: true })
+  @IsOptional()
   @IsEnum(LoanStatus)
-  @IsNotEmpty()
   status?: LoanStatus;
 }

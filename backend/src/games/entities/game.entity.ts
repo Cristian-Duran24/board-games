@@ -15,9 +15,9 @@ export class Game {
   title: string;
 
   // Optimización: eager: false (por defecto) para no traer la categoría siempre
-  @ManyToOne(() => Category, (category) => category.games) 
-  @Field(() => Category)
-  category: Category;
+  @ManyToOne(() => Category, (category) => category.games, { nullable: true })
+  @Field(() => Category, { nullable: true })
+  category?: Category;
 
   @Column({ default: 1 })
   @Field(() => Int)
