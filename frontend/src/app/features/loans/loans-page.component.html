@@ -1,0 +1,254 @@
+<div class="flex flex-col h-full min-h-0">
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <header class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-text-primary tracking-tight">Gestión de préstamos</h1>
+      <p class="text-text-secondary text-sm mt-0.5">Controla los préstamos activos de tus juegos de mesa</p>
+    </div>
+    <app-button variant="filled" color="primary" size="md" (clicked)="openCreateDialog()">
+      <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+      Nuevo préstamo
+    </app-button>
+  </header>
+
+  <!-- ── Loading ────────────────────────────────────────────────────── -->
+  @if (loansService.loading()) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-4">
+      <mat-spinner diameter="48" />
+      <p class="text-text-secondary text-sm">Cargando préstamos...</p>
+    </div>
+  </div>
+  }
+
+  <!-- ── Error ──────────────────────────────────────────────────────── -->
+  @else if (loansService.error()) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+      <p class="text-text-primary font-semibold">Error al cargar los préstamos</p>
+      <p class="text-text-muted text-sm">{{ loansService.error() }}</p>
+      <button type="button"
+        class="mt-2 px-4 py-2 rounded-xl text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+        (click)="loansService.loadLoans()">
+        Reintentar
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- ── Contenido principal ────────────────────────────────────────── -->
+  @else {
+
+  <!-- Filtros + Buscador -->
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <button type="button" [class]="getTabClass('all')" (click)="activeFilter.set('all')">Todos</button>
+      <button type="button" [class]="getTabClass('active')" (click)="activeFilter.set('active')">
+        Activos
+        @if (activeCount() > 0) { <span class="ml-1 text-chip-blue font-semibold">({{ activeCount() }})</span> }
+      </button>
+      <button type="button" [class]="getTabClass('returned')" (click)="activeFilter.set('returned')">Devueltos</button>
+      <button type="button" [class]="getTabClass('overdue')" (click)="activeFilter.set('overdue')">
+        Vencidos
+        @if (overdueCount() > 0) { <span class="ml-1 text-chip-red font-semibold">({{ overdueCount() }})</span> }
+      </button>
+    </div>
+    <div class="relative w-72">
+      <lucide-icon [img]="iconSearch"
+        class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+      <input type="text"
+        class="input-field py-2.5! pl-11"
+        placeholder="Buscar por nombre..."
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)" />
+    </div>
+  </div>
+
+  <!-- ── Empty state ────────────────────────────────────────────────── -->
+  @if (dataSource.filteredData.length === 0) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+      <p class="text-text-primary font-semibold">No hay préstamos para mostrar</p>
+      <p class="text-text-muted text-sm">
+        @if (activeFilter() !== 'all' || searchQuery()) {
+          Intenta cambiar los filtros de búsqueda.
+        } @else {
+          Registra el primer préstamo para comenzar.
+        }
+      </p>
+      @if (activeFilter() === 'all' && !searchQuery()) {
+        <app-button variant="filled" color="primary" size="sm" (clicked)="openCreateDialog()">
+          <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+          Nuevo préstamo
+        </app-button>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- ── Tabla ──────────────────────────────────────────────────────── -->
+  @else {
+  <div class="rounded-2xl border border-border-default overflow-hidden">
+    <table mat-table [dataSource]="dataSource" class="w-full">
+
+      <!-- Columna N -->
+      <ng-container matColumnDef="index">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider! w-12">N</th>
+        <td mat-cell *matCellDef="let loan; let i = index" class="text-text-muted! text-sm!">
+          {{ i + 1 }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Juego (imagen + título + categoría) -->
+      <ng-container matColumnDef="game">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Juego</th>
+        <td mat-cell *matCellDef="let loan">
+          <div class="flex items-center gap-3 py-1.5">
+            @if (loan.game.image) {
+              <img [src]="getGameImage(loan.game.image)" [alt]="loan.game.title"
+                class="w-10 h-10 rounded-lg object-cover shrink-0" />
+            } @else {
+              <div class="w-10 h-10 rounded-lg bg-subtle flex items-center justify-center shrink-0 text-base">🎲</div>
+            }
+            <div>
+              <span class="font-semibold text-text-primary text-sm block leading-tight">{{ loan.game.title }}</span>
+              @if (loan.game.category) {
+                <span class="text-text-muted text-xs">{{ loan.game.category.name }}</span>
+              }
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Cliente (avatar + nombre + teléfono) -->
+      <ng-container matColumnDef="client">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Cliente</th>
+        <td mat-cell *matCellDef="let loan">
+          <div class="flex items-center gap-3 py-1">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 select-none"
+              [style.background-color]="getAvatarBg(loan.client.id)">
+              {{ getInitials(loan.client.name) }}
+            </div>
+            <div>
+              <span class="text-text-primary text-sm font-medium block leading-tight">{{ loan.client.name }}</span>
+              @if (loan.client.phone) {
+                <span class="text-text-muted text-xs">{{ loan.client.phone }}</span>
+              }
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Fecha de préstamo (inicio → fin) -->
+      <ng-container matColumnDef="dates">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Fecha de préstamo</th>
+        <td mat-cell *matCellDef="let loan" class="text-sm!">
+          <div class="flex items-center gap-2"
+            [class.text-chip-red]="loan.status === 'overdue'"
+            [class.text-text-primary]="loan.status !== 'overdue'">
+            <lucide-icon [img]="iconCalendar" class="w-3.5 h-3.5 shrink-0" />
+            <span>{{ loan.startDate | date:'MMM d, y':'UTC' }} - {{ loan.endDate | date:'MMM d, y':'UTC' }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Estado -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Estado</th>
+        <td mat-cell *matCellDef="let loan">
+          @switch (loan.status) {
+            @case ('active') {
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border bg-chip-blue/10 text-chip-blue border-chip-blue/25">
+                <span class="w-1.5 h-1.5 rounded-full bg-chip-blue"></span>Activo
+              </span>
+            }
+            @case ('returned') {
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border bg-chip-green/10 text-chip-green border-chip-green/25">
+                <span class="w-1.5 h-1.5 rounded-full bg-chip-green"></span>Devuelto
+              </span>
+            }
+            @case ('overdue') {
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border bg-chip-red/10 text-chip-red border-chip-red/25">
+                <span class="w-1.5 h-1.5 rounded-full bg-chip-red"></span>Vencido
+              </span>
+            }
+          }
+        </td>
+      </ng-container>
+
+      <!-- Columna Precio Total -->
+      <ng-container matColumnDef="totalPrice">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Precio Total</th>
+        <td mat-cell *matCellDef="let loan" class="text-text-primary! text-sm! font-medium!">
+          {{ formatMoney(loan.totalPrice) }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Acciones -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider! w-16">Acciones</th>
+        <td mat-cell *matCellDef="let loan">
+          <div class="relative">
+            <button type="button"
+              class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-subtle/50 text-text-secondary transition-colors"
+              [attr.aria-label]="'Acciones para préstamo ' + loan.id"
+              (click)="toggleMenu($event, loan.id)">
+              <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
+            </button>
+
+            @if (openMenuId() === loan.id) {
+            <div class="fixed inset-0 z-10" (click)="closeMenu()"></div>
+            <div class="fixed z-50 min-w-44 rounded-xl bg-surface border border-border-default shadow-xl py-1"
+              [style.top.px]="menuPosition()?.top"
+              [style.right.px]="menuPosition()?.right">
+
+              <!-- Editar -->
+              <button type="button"
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-text-primary hover:bg-subtle/50 transition-colors"
+                (click)="openEditDialog(loan); closeMenu()">
+                <lucide-icon [img]="iconPencil" class="w-4 h-4 text-text-secondary" />
+                Editar fechas
+              </button>
+
+              <!-- Devolver juego (solo si es activo o vencido) -->
+              @if (isReturnable(loan)) {
+              <button type="button"
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-chip-green hover:bg-chip-green/10 transition-colors"
+                (click)="openReturnDialog(loan); closeMenu()">
+                <lucide-icon [img]="iconReturn" class="w-4 h-4" />
+                Devolver juego
+              </button>
+              }
+
+              <!-- Eliminar -->
+              <button type="button"
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-danger hover:bg-danger/10 transition-colors"
+                (click)="openDeleteDialog(loan); closeMenu()">
+                <lucide-icon [img]="iconTrash" class="w-4 h-4" />
+                Eliminar
+              </button>
+            </div>
+            }
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-border-default"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        class="hover:bg-subtle/20 transition-colors border-b border-border-default last:border-0"></tr>
+
+    </table>
+
+    <!-- Paginador -->
+    <mat-paginator
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+      class="bg-surface! text-text-secondary!">
+    </mat-paginator>
+  </div>
+  }
+
+  }<!-- end else -->
+
+</div>

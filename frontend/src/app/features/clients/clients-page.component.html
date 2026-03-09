@@ -1,0 +1,193 @@
+<div class="flex flex-col h-full min-h-0">
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <header class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-text-primary tracking-tight">Gestión de clientes</h1>
+      <p class="text-text-secondary text-sm mt-0.5">Gestiona los préstamos de tus juegos de mesa</p>
+    </div>
+    <app-button variant="filled" color="primary" size="md" (clicked)="openCreateDialog()">
+      <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+      Nuevo cliente
+    </app-button>
+  </header>
+
+  <!-- ── Loading ────────────────────────────────────────────────────── -->
+  @if (clientsService.loading()) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-4">
+      <mat-spinner diameter="48" />
+      <p class="text-text-secondary text-sm">Cargando clientes...</p>
+    </div>
+  </div>
+  }
+
+  <!-- ── Error ──────────────────────────────────────────────────────── -->
+  @else if (clientsService.error()) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+      <p class="text-text-primary font-semibold">Error al cargar los clientes</p>
+      <p class="text-text-muted text-sm">{{ clientsService.error() }}</p>
+      <button type="button"
+        class="mt-2 px-4 py-2 rounded-xl text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+        (click)="clientsService.loadClients()">
+        Reintentar
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- ── Contenido principal ────────────────────────────────────────── -->
+  @else {
+
+  <!-- Barra de búsqueda -->
+  <div class="flex justify-end mb-4">
+    <div class="relative w-72">
+      <lucide-icon [img]="iconSearch"
+        class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+      <input type="text"
+        class="input-field py-2.5! pl-11"
+        placeholder="Buscar por nombre, celular..."
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)" />
+    </div>
+  </div>
+
+  <!-- ── Empty state ────────────────────────────────────────────────── -->
+  @if (dataSource.data.length === 0) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+      <p class="text-text-primary font-semibold">No hay clientes registrados</p>
+      <p class="text-text-muted text-sm">Registra el primer cliente para comenzar.</p>
+      <app-button variant="filled" color="primary" size="sm" (clicked)="openCreateDialog()">
+        <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+        Nuevo cliente
+      </app-button>
+    </div>
+  </div>
+  }
+
+  <!-- ── Tabla ──────────────────────────────────────────────────────── -->
+  @else {
+  <div class="rounded-2xl border border-border-default overflow-hidden">
+    <table mat-table [dataSource]="dataSource" class="w-full">
+
+      <!-- Columna N -->
+      <ng-container matColumnDef="index">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider! w-12">N</th>
+        <td mat-cell *matCellDef="let client; let i = index" class="text-text-muted! text-sm!">
+          {{ i + 1 }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Cliente (avatar + nombre) -->
+      <ng-container matColumnDef="client">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Cliente</th>
+        <td mat-cell *matCellDef="let client">
+          <div class="flex items-center gap-3 py-1">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 select-none"
+              [style.background-color]="getAvatarBg(client.id)">
+              {{ getInitials(client.name) }}
+            </div>
+            <span class="font-medium text-text-primary">{{ client.name }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Celular -->
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider">Celular</th>
+        <td mat-cell *matCellDef="let client" class="text-text-primary! text-sm!">
+          {{ client.phone }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Correo Electrónico</th>
+        <td mat-cell *matCellDef="let client" class="text-sm!">
+          @if (client.email) {
+            <span class="text-text-primary">{{ client.email }}</span>
+          } @else {
+            <span class="text-text-muted italic text-xs">Sin correo</span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Columna Préstamos activos -->
+      <ng-container matColumnDef="activeLoans">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Préstamos activos</th>
+        <td mat-cell *matCellDef="let client">
+          @if (getActiveLoansCount(client) > 0) {
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-chip-blue/10 text-chip-blue border-chip-blue/25">
+              {{ getActiveLoansCount(client) }} {{ getActiveLoansCount(client) === 1 ? 'Activo' : 'Activos' }}
+            </span>
+          } @else {
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-chip-disabled/10 text-chip-disabled border-chip-disabled/25">
+              Sin préstamos
+            </span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Columna Total Histórico -->
+      <ng-container matColumnDef="totalLoans">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider!">Total Histórico</th>
+        <td mat-cell *matCellDef="let client" class="text-text-primary! text-sm! font-medium">
+          {{ getTotalLoansCount(client) }}
+        </td>
+      </ng-container>
+
+      <!-- Columna Acciones -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-text-secondary! text-xs! font-semibold! uppercase! tracking-wider! w-16">Acciones</th>
+        <td mat-cell *matCellDef="let client">
+          <div class="relative">
+            <button type="button"
+              class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-subtle/50 text-text-secondary transition-colors"
+              [attr.aria-label]="'Acciones para ' + client.name"
+              (click)="toggleMenu($event, client.id)">
+              <lucide-icon [img]="iconMoreVertical" class="w-4 h-4" />
+            </button>
+
+            @if (openMenuId() === client.id) {
+            <div class="fixed inset-0 z-10" (click)="closeMenu()"></div>
+            <div class="fixed z-50 min-w-36 rounded-xl bg-surface border border-border-default shadow-xl py-1"
+              [style.top.px]="menuPosition()?.top"
+              [style.right.px]="menuPosition()?.right">
+              <button type="button"
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-text-primary hover:bg-subtle/50 transition-colors"
+                (click)="openEditDialog(client); closeMenu()">
+                <lucide-icon [img]="iconPencil" class="w-4 h-4 text-text-secondary" />
+                Editar
+              </button>
+              <button type="button"
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-danger hover:bg-danger/10 transition-colors"
+                (click)="openDeleteDialog(client); closeMenu()">
+                <lucide-icon [img]="iconTrash" class="w-4 h-4" />
+                Eliminar
+              </button>
+            </div>
+            }
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-border-default"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        class="hover:bg-subtle/20 transition-colors border-b border-border-default last:border-0"></tr>
+
+    </table>
+
+    <!-- Paginador -->
+    <mat-paginator
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+      class="bg-surface! text-text-secondary!">
+    </mat-paginator>
+  </div>
+  }
+
+  }<!-- end else -->
+
+</div>

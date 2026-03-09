@@ -1,0 +1,49 @@
+<div class="flex h-screen overflow-hidden bg-canvas">
+
+  <!-- Backdrop: solo visible en móvil cuando el sidebar está abierto -->
+  @if (sidebarOpen()) {
+  <div class="fixed inset-0 bg-black/50 z-20 lg:hidden" (click)="toggleSidebar()" aria-hidden="true">
+  </div>
+  }
+
+  <!--
+    Sidebar wrapper:
+    - Móvil  : posición fixed, se desliza con translateX
+    - Desktop: posición static (en flujo), ancho colapsa con transición
+    lg:translate-x-0 anula la traducción de móvil en breakpoint largo
+  -->
+  <div class="fixed inset-y-0 left-0 z-30 transition-transform duration-300 ease-in-out
+          lg:static lg:inset-auto lg:z-auto lg:shrink-0 lg:overflow-hidden
+          lg:transition-[width] lg:duration-300 lg:translate-x-0" [class.translate-x-0]="sidebarOpen()"
+    [class.-translate-x-full]="!sidebarOpen()" [class.lg:w-56]="sidebarOpen()" [class.lg:w-0]="!sidebarOpen()">
+    <app-sidebar />
+  </div>
+
+  <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+    <header class="flex items-center justify-between px-8 py-3 border-b border-border-default bg-canvas shrink-0">
+      <!-- Botón hamburguesa -->
+      <button type="button" class="p-1.5 rounded-lg hover:bg-subtle/30 text-text-secondary transition-colors"
+        (click)="toggleSidebar()" [attr.aria-expanded]="sidebarOpen()"
+        [attr.aria-label]="sidebarOpen() ? 'Cerrar menú' : 'Abrir menú'">
+        <lucide-icon [img]="iconMenu" class="w-6 h-6" />
+      </button>
+      <!-- Usuario administrador -->
+      <!-- TODO: reemplazar con datos reales del AuthService cuando se implemente auth -->
+      <button type="button" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+        <div class="text-right">
+          <p class="text-sm font-semibold text-text-primary leading-tight">Jhon Doe</p>
+          <p class="text-xs text-text-muted">Super Admin</p>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-amber-700 flex items-center justify-center overflow-hidden shrink-0">
+          <img src="https://api.dicebear.com/9.x/initials/svg?seed=JD&backgroundColor=e8a72a" alt="Avatar"
+            class="w-full h-full" />
+        </div>
+        <lucide-icon [img]="iconChevronDown" class="w-4 h-4 text-text-muted" />
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-8 py-6" aria-label="Contenido principal">
+      <router-outlet />
+    </main>
+  </div>
+</div>

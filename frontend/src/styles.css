@@ -1,0 +1,169 @@
+@import 'tailwindcss';
+
+@theme {
+  /* === SEMANTIC TOKENS === */
+
+  /* Text Colors */
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --color-text-inverse: #F8FAFC;
+
+  /* Background Colors */
+  --color-canvas: #0F172A;
+  --color-surface: #1B273B;
+  --color-subtle: #334155;
+  --color-bg-success: #14532D;
+  --color-bg-warning: #713F12;
+  --color-bg-danger: #5A1717;
+
+  /* Brand Colors */
+  --color-primary: #3B82F6;
+  --color-success: #22C55E;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+  --color-secondary: #1B273B;
+
+  /* Borders */
+  --color-border-default: #334155;
+  --color-border-subtle: #1B273B;
+  --color-border-brand: #004C58;
+
+  /* === Chips === */
+  --color-chip-blue:     #60A5FA;
+  --color-chip-green:    #22C55E;
+  --color-chip-red:      #D64545;
+  --color-chip-yellow:   #EAB308;
+  --color-chip-indigo:   #6366F1;
+  --color-chip-disabled: #64748B;
+
+  /* === Buttons === */
+  --color-button-filled-primary: #1D6AE5;
+  --color-button-filled-secondary: #1B273B;
+  --color-button-filled-success: #16A34A;
+  --color-button-filled-danger: #D64545;
+
+  --color-button-outlined-primary-border: #3B82F6;  /* Añadido para border */
+  --color-button-outlined-secondary-border: #334155;
+  --color-button-outlined-success-border: #16A34A;
+  --color-button-outlined-danger-border: #D64545;
+
+  --color-button-text-primary: #3B82F6;      /* Añadido, sin border */
+  --color-button-text-secondary: #94A3B8;
+  --color-button-text-success: #16A34A;
+  --color-button-text-danger: #D64545;
+}
+
+/* ============================================================
+  BASE STYLES (Tailwind)
+   ============================================================ */
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    color-scheme: dark;
+  }
+}
+
+/* ============================================================
+  ANGULAR MATERIAL
+  Mapeo de variables del sistema Material a tokens del design system
+   ============================================================ */
+:root {
+  /* Colores primarios */
+  --mat-sys-primary:                   var(--color-primary);
+  --mat-sys-on-primary:                #ffffff;
+  --mat-sys-primary-container:         var(--color-chip-blue-bg);
+  --mat-sys-on-primary-container:      var(--color-primary);
+
+  /* Superficies */
+  --mat-sys-surface:                   var(--color-surface);
+  --mat-sys-on-surface:                var(--color-text-primary);
+  --mat-sys-on-surface-variant:        var(--color-text-secondary);
+  --mat-sys-surface-container:         var(--color-subtle);
+  --mat-sys-surface-container-high:    var(--color-border-default);
+  --mat-sys-surface-container-highest: var(--color-border-subtle);
+  --mat-sys-background:                var(--color-canvas);
+  --mat-sys-on-background:             var(--color-text-primary);
+
+  /* Errores y feedback */
+  --mat-sys-error:                     var(--color-danger);
+  --mat-sys-on-error:                  #ffffff;
+  --mat-sys-error-container:           var(--color-bg-danger);
+  --mat-sys-on-error-container:        var(--color-danger);
+
+  --mat-sys-warning:                   var(--color-warning);
+  --mat-sys-on-warning:                #ffffff;
+  --mat-sys-warning-container:         var(--color-bg-warning);
+  --mat-sys-on-warning-container:      var(--color-warning);
+
+  /* Bordes y outlines */
+  --mat-sys-outline:                   var(--color-border-default);
+  --mat-sys-outline-variant:           var(--color-border-subtle);
+
+  /* Dialog */
+  --mat-dialog-container-color:        var(--color-surface);
+
+  /* Snackbar */
+  --mat-snack-bar-button-color:        var(--color-primary);
+
+  /* Progress spinner */
+  --mat-progress-spinner-active-indicator-color: var(--color-primary);
+
+  /* Table */
+  --mat-table-background-color:               var(--color-surface);
+  --mat-table-header-headline-color:          var(--color-text-secondary);
+  --mat-table-row-item-label-text-color:      var(--color-text-primary);
+  --mat-table-row-item-outline-color:         var(--color-border-default);
+  --mat-table-footer-supporting-text-color:   var(--color-text-secondary);
+
+  /* Paginator */
+  --mat-paginator-container-background-color: var(--color-surface);
+  --mat-paginator-container-text-color:       var(--color-text-secondary);
+  --mat-paginator-enabled-icon-color:         var(--color-text-secondary);
+  --mat-paginator-disabled-icon-color:        var(--color-text-muted);
+}
+
+/* ============================================================
+  UTILIDADES PERSONALIZADAS (Tailwind CSS 4 @utility)
+   ============================================================ */
+
+/* Input estilizado con tokens del design system */
+@utility input-field {
+  @apply w-full bg-surface border border-border-default rounded-2xl px-4 py-3
+        text-text-primary placeholder:text-text-muted
+        focus:outline-none focus:border-primary transition-all;
+}
+
+/* Label de formulario */
+@utility form-label {
+  @apply block text-sm font-medium text-text-secondary mb-1.5;
+}
+
+/* ============================================================
+  SIDEBAR — Estado activo del enlace de navegación
+  routerLinkActive aplica la utility class active-link
+   ============================================================ */
+@utility active-link {
+  @apply bg-primary! text-text-inverse! font-semibold;
+}
+
+/* ============================================================
+  NUMBER INPUT — Ocultar flechas de spin en Firefox y Chrome
+   ============================================================ */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

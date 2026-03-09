@@ -23,7 +23,8 @@ export class GamesService {
     const game = this.gamesRepository.create({ 
       ...createGameInput, 
       category, 
-      inStock: createGameInput.inTotal 
+      inStock: createGameInput.inTotal,
+      image: createGameInput.image,  // Guarda el base64 
     });
     return this.gamesRepository.save(game);
   }

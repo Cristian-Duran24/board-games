@@ -1,6 +1,7 @@
-import { IsIn, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { CreateLoanInput } from './create-loan.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { LoanStatus } from '../../enums/loan-status.enum';
 
 @InputType()
 export class UpdateLoanInput extends PartialType(CreateLoanInput) {
@@ -8,9 +9,8 @@ export class UpdateLoanInput extends PartialType(CreateLoanInput) {
   @IsInt()
   id: number;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsNotEmpty()
-  @IsIn(['activo', 'devuelto', 'vencido']) // Validación estricta de estados
-  status?: string;
+  @Field(() => LoanStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(LoanStatus)
+  status?: LoanStatus;
 }

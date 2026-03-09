@@ -1,0 +1,96 @@
+<div class="flex flex-col h-full min-h-0 overflow-y-auto">
+  <header class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-text-primary tracking-tight">Categorías</h1>
+      <p class="text-text-secondary text-sm mt-0.5">Gestiona las categorías de juegos de mesa</p>
+    </div>
+    <app-button variant="filled" color="primary" size="md" (clicked)="openCreateDialog()">
+      <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+      Nueva categoría
+    </app-button>
+  </header>
+
+  @if (categoriesService.loading()) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-4">
+      <mat-spinner diameter="48" />
+      <p class="text-text-secondary text-sm">Cargando categorías...</p>
+    </div>
+  </div>
+  }
+
+  @else if (categoriesService.error()) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+      <!-- <div class="w-14 h-14 rounded-2xl bg-danger/10 flex items-center justify-center">
+        <lucide-icon [img]="iconTag" class="w-7 h-7 text-danger" />
+      </div> -->
+      <p class="text-text-primary font-semibold">Error al cargar las categorías</p>
+      <p class="text-text-muted text-sm">{{ categoriesService.error() }}</p>
+      <button type="button"
+        class="mt-2 px-4 py-2 rounded-xl text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+        (click)="categoriesService.loadCategories()">
+        Reintentar
+      </button>
+    </div>
+  </div>
+  }
+
+  @else if (categoriesService.categories().length === 0) {
+  <div class="flex items-center justify-center flex-1 py-24">
+    <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+      <!-- <div class="w-14 h-14 rounded-2xl bg-subtle/40 flex items-center justify-center">
+        <lucide-icon [img]="iconTag" class="w-7 h-7 text-text-muted" />
+      </div> -->
+      <p class="text-text-primary font-semibold">No hay categorías aún</p>
+      <p class="text-text-muted text-sm">Crea la primera categoría.</p>
+      <app-button variant="filled" color="primary" size="sm" (clicked)="openCreateDialog()">
+        <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+        Nueva categoría
+      </app-button>
+    </div>
+  </div>
+  }
+
+  <!-- ── Lista de categorías ───────────────────────────────────────── -->
+  @else {
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+    @for (category of categoriesService.categories(); track category.id) {
+    <article
+      class="bg-surface rounded-2xl border border-border-default hover:border-primary/60 transition-all duration-200 p-5 flex items-center justify-between group">
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+          <lucide-icon [img]="iconTag" class="w-4 h-4 text-primary" />
+        </div> -->
+        <span class="text-text-primary font-semibold truncate">{{ category.name }}</span>
+      </div>
+
+      <div class="flex items-center gap-1 shrink-0 ml-3 opacity-60 group-hover:opacity-100 transition-opacity">
+        <!-- Editar -->
+        <button type="button"
+          class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-primary/10 text-text-muted hover:text-primary transition-colors"
+          (click)="openEditDialog(category)" [attr.aria-label]="'Editar ' + category.name">
+          <lucide-icon [img]="iconPencil" class="w-4 h-4" />
+        </button>
+        <!-- Eliminar -->
+        <button type="button"
+          class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-danger/10 text-text-muted hover:text-danger transition-colors"
+          (click)="openDeleteDialog(category)" [attr.aria-label]="'Eliminar ' + category.name">
+          <lucide-icon [img]="iconTrash" class="w-4 h-4" />
+        </button>
+
+      </div>
+    </article>
+    }
+
+  </div>
+
+  <!-- Contador total -->
+  <p class="text-text-muted text-sm mt-4">
+    {{ categoriesService.categories().length }}
+    {{ categoriesService.categories().length === 1 ? 'categoría' : 'categorías' }} en total
+  </p>
+  }
+
+</div>

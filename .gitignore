@@ -1,40 +1,52 @@
-# --- General ---
-# Dependencies
+# ============================================================
+# GENERAL
+# ============================================================
 node_modules/
-
-# Logs
-npm-debug.log
-pnpm-debug.log*
 *.log
-
-# OS
+npm-debug.log*
+pnpm-debug.log*
 .DS_Store
 Thumbs.db
-.pnpm-lock.yaml
 
-# Backend
+# ============================================================
+# BACKEND (NestJS)
+# ============================================================
+
+# Variables de entorno (nunca subir credenciales)
 backend/.env
 backend/.env.*
-!backend/.env.template
-!backend/.env.example
+backend/.env.template
+backend/.env.example
 
-# --- Backend (NestJS / Node) ---
-# Build
-dist/
+# Build y cobertura
 backend/dist/
-coverage/
 backend/coverage/
+
+# Datos de PostgreSQL en Docker
 backend/postgres/
-
-# Database specific
-postgres-data/
 backend/postgres-data/
+postgres-data/
 
-# --- IDE / Editor ---
-# VS Code
+# ============================================================
+# FRONTEND (Angular 21)
+# ============================================================
+
+# Cache interno de Angular CLI (Vite, tsbuildinfo, etc.)
+frontend/.angular/
+
+# Build de producción
+frontend/dist/
+
+# Cobertura de tests
+frontend/coverage/
+
+# Variables de entorno del frontend (si las usas en el futuro)
+frontend/.env
+frontend/.env.*
+
+# ============================================================
+# IDE / EDITOR
+# ============================================================
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace

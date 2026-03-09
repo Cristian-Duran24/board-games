@@ -1,0 +1,27 @@
+<aside class="w-56 bg-surface h-screen flex flex-col border-r border-border-default shrink-0">
+  <header class="px-5 py-5">
+    <a routerLink="/" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+      <img src="assets/images/10MINDS-LOGO.png" alt="Logo 10Minds" class="w-10 h-10 rounded-2xl object-contain" />
+      <div>
+        <span class="text-lg font-bold text-text-primary block leading-tight">10Minds</span>
+        <span class="text-xs text-text-secondary block">BoardGames</span>
+      </div>
+    </a>
+  </header>
+  <nav class="flex-1 px-3 pt-5" aria-label="Menú principal">
+    <p class="text-xs font-semibold text-primary uppercase tracking-widest px-3 mb-3">Menú Principal</p>
+    <ul class="space-y-1" role="list">
+      @for (item of menuItems(); track item.path) {
+      <li>
+        <a [routerLink]="item.path" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:bg-subtle/40 hover:text-text-primary transition-all"
+          [attr.aria-label]="item.label">
+          <lucide-icon [img]="item.icon" class="w-5 h-5 shrink-0 text-current"></lucide-icon>
+          <span class="font-medium text-current">{{ item.label }}</span>
+        </a>
+      </li>
+      }
+    </ul>
+  </nav>
+
+</aside>

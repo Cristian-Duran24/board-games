@@ -1,0 +1,106 @@
+
+<div class="flex flex-col h-full min-h-0">
+  <header class="flex items-start justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-text-primary tracking-tight">Juegos</h1>
+      <p class="text-text-secondary text-sm mt-0.5">Gestiona el catálogo de juegos de mesa</p>
+    </div>
+
+    <app-button variant="filled" color="primary" size="md" (clicked)="openCreateDialog()">
+      <lucide-icon [img]="iconPlus" class="w-4 h-4" />
+      Nuevo juego
+    </app-button>
+  </header>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+
+    <nav class="flex items-center gap-2 flex-wrap" aria-label="Filtrar por categoría">
+      <button type="button"
+        class="px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer"
+        [class]="selectedCategoryId() === null
+          ? 'bg-subtle text-text-primary border-subtle'
+          : 'bg-transparent text-text-secondary border-border-default hover:border-subtle hover:text-text-primary hover:bg-subtle/40'"
+        (click)="selectCategory(null)">
+        Todos
+      </button>
+
+      @for (cat of gamesService.categories(); track cat.id) {
+        <button type="button"
+          class="px-4 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer"
+          [class]="selectedCategoryId() === cat.id
+            ? 'bg-subtle text-text-primary border-subtle'
+            : 'bg-transparent text-text-secondary border-border-default hover:border-subtle hover:text-text-primary hover:bg-subtle/40'"
+          (click)="selectCategory(cat.id)">
+          {{ cat.name }}
+        </button>
+      }
+    </nav>
+
+    <!-- Búsqueda -->
+    <div class="relative">
+      <lucide-icon [img]="iconSearch"
+        class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+      <input type="text" placeholder="Buscar por nombre.."
+        class="pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-border-default text-text-primary text-sm placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors w-56"
+        [value]="searchQuery()" (input)="onSearch($event)" aria-label="Buscar juego por nombre" />
+    </div>
+  </div>
+
+  <!-- ── Estado: cargando ── -->
+  @if (gamesService.loading()) {
+    <div class="flex items-center justify-center flex-1 py-24">
+      <div class="flex flex-col items-center gap-4">
+        <mat-spinner diameter="48" />
+        <p class="text-text-secondary text-sm">Cargando juegos...</p>
+      </div>
+    </div>
+  }
+
+  <!-- ── Estado: error ── -->
+  @else if (gamesService.error()) {
+    <div class="flex items-center justify-center flex-1 py-24">
+      <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+        <p class="text-danger font-semibold">Error al cargar los juegos</p>
+        <p class="text-text-muted text-sm">{{ gamesService.error() }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- ── Estado: sin resultados ── -->
+  @else if (filteredGames().length === 0) {
+    <div class="flex items-center justify-center flex-1 py-24">
+      <div class="flex flex-col items-center gap-3 text-center max-w-sm">
+        <p class="text-text-secondary font-semibold text-lg">No se encontraron juegos</p>
+        <p class="text-text-muted text-sm">
+          @if (searchQuery()) {
+            Ningún juego coincide con "{{ searchQuery() }}".
+          } @else {
+            Esta categoría no tiene juegos registrados aún.
+          }
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- ── Grid de tarjetas ── -->
+  @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-4">
+      @for (game of filteredGames(); track game.id) {
+        <app-game-card
+          [title]="game.title"
+          [price]="game.price"
+          [stock]="game.inStock"
+          [category]="game.category.name"
+          [image]="game.image"
+          [playersMin]="game.playersMin"
+          [playersMax]="game.playersMax"
+          [duration]="game.duration"
+          [fallbackColorIndex]="game.id"
+          [categoryColor]="gamesService.getCategoryColor(game.category.id)"
+          (editClicked)="openEditDialog(game)"
+          (deleteClicked)="openDeleteDialog(game)" />
+      }
+    </div>
+  }
+
+</div>

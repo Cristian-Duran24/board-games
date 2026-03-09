@@ -1,0 +1,138 @@
+
+<div class="flex items-center justify-between px-6 py-4 border-b border-border-subtle">
+  <h2 class="text-xl font-bold text-text-primary">Nuevo Juego</h2>
+  <button type="button"
+    class="text-text-muted hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-subtle/30"
+    (click)="onCancel()" aria-label="Cerrar">
+    <lucide-icon [img]="iconClose" class="w-5 h-5" />
+  </button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="px-6 py-5 space-y-4">
+    <div>
+      <label class="form-label" for="title">Nombre del juego *</label>
+      <input id="title" formControlName="title" type="text"
+        class="input-field"
+        placeholder="Ej: Catan, Monopolio, Pandemic..."
+        autocomplete="off" />
+      @if (form.get('title')?.errors?.['required'] && form.get('title')?.touched) {
+        <p class="text-danger text-xs mt-1">El nombre es obligatorio</p>
+      }
+      @if (form.get('title')?.errors?.['minlength'] && form.get('title')?.touched) {
+        <p class="text-danger text-xs mt-1">Mínimo 5 caracteres</p>
+      }
+    </div>
+
+    <div>
+      <label class="form-label" for="categoryId">Categoría *</label>
+      <select id="categoryId" formControlName="categoryId"
+        class="input-field appearance-none cursor-pointer">
+        <option [ngValue]="null" disabled>Selecciona una categoría</option>
+        @for (cat of dialogData.categories; track cat.id) {
+          <option [ngValue]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+      @if (form.get('categoryId')?.errors?.['required'] && form.get('categoryId')?.touched) {
+        <p class="text-danger text-xs mt-1">La categoría es obligatoria</p>
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="form-label" for="price">Precio (Bs/día) *</label>
+        <input id="price" formControlName="price" type="number"
+          class="input-field"
+          inputmode="decimal" placeholder="Ej: 5.00" min="0.01" step="0.01" />
+        @if (form.get('price')?.errors?.['required'] && form.get('price')?.touched) {
+          <p class="text-danger text-xs mt-1">El precio es obligatorio</p>
+        }
+        @if (form.get('price')?.errors?.['min'] && form.get('price')?.touched) {
+          <p class="text-danger text-xs mt-1">Debe ser mayor a 0</p>
+        }
+      </div>
+
+      <div>
+        <label class="form-label" for="inTotal">Cantidad total *</label>
+        <input id="inTotal" formControlName="inTotal" type="number"
+          class="input-field"
+          inputmode="numeric" placeholder="Ej: 3" min="1" step="1" />
+        @if (form.get('inTotal')?.errors?.['required'] && form.get('inTotal')?.touched) {
+          <p class="text-danger text-xs mt-1">La cantidad es obligatoria</p>
+        }
+        @if (form.get('inTotal')?.errors?.['min'] && form.get('inTotal')?.touched) {
+          <p class="text-danger text-xs mt-1">Mínimo 1 unidad</p>
+        }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="form-label" for="playersMin">Jug. mínimo</label>
+        <input id="playersMin" formControlName="playersMin" type="number"
+          class="input-field"
+          inputmode="numeric" placeholder="Ej: 2" min="1" step="1" />
+      </div>
+
+      <div>
+        <label class="form-label" for="playersMax">Jug. máximo</label>
+        <input id="playersMax" formControlName="playersMax" type="number"
+          class="input-field"
+          inputmode="numeric" placeholder="Ej: 6" min="1" step="1" />
+      </div>
+
+      <div>
+        <label class="form-label" for="duration">Duración (min)</label>
+        <input id="duration" formControlName="duration" type="number"
+          class="input-field"
+          inputmode="numeric" placeholder="Ej: 60" min="1" step="1" />
+      </div>
+    </div>
+
+    <div>
+      <label class="form-label">Imagen de portada (opcional)</label>
+
+      @if (imagePreview()) {
+      <div class="relative rounded-2xl overflow-hidden border border-border-default h-36">
+        <img [src]="imagePreview()!" alt="Preview de portada" class="w-full h-full object-cover" />
+        <button type="button"
+          class="absolute top-2 right-2 bg-canvas/80 hover:bg-canvas text-text-primary border border-border-default rounded-full p-1.5 transition-colors"
+          (click)="clearImage()" aria-label="Quitar imagen">
+          <lucide-icon [img]="iconClose" class="w-4 h-4" />
+        </button>
+      </div>
+      } @else {
+      <label
+        class="flex flex-col items-center justify-center gap-2 h-28 rounded-2xl border-2 border-dashed border-border-default hover:border-primary cursor-pointer transition-colors bg-subtle/10 hover:bg-primary/5"
+        for="imageUpload">
+        <lucide-icon [img]="iconImage" class="w-7 h-7 text-text-muted" />
+        <p class="text-xs text-text-muted">PNG, JPG, WEBP · Máx. 2 MB</p>
+      </label>
+      <input id="imageUpload" type="file" accept="image/*" class="hidden" (change)="onFileChange($event)" />
+      }
+    </div>
+
+  </div>
+
+  <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-subtle">
+    <button type="button"
+      class="px-5 py-2.5 rounded-xl text-sm font-medium text-text-secondary border border-border-default hover:bg-subtle/30 transition-colors cursor-pointer"
+      (click)="onCancel()" [disabled]="submitting()">
+      Cancelar
+    </button>
+
+    <button type="submit"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors cursor-pointer"
+      [class.bg-button-filled-primary]="!submitting()" [class.hover:bg-primary]="!submitting()"
+      [class.bg-button-filled-primary/50]="submitting()" [class.cursor-not-allowed]="submitting()"
+      [disabled]="form.invalid || submitting()">
+      @if (submitting()) {
+      <mat-spinner diameter="16" />
+      <span>Guardando...</span>
+      } @else {
+      <span>Crear juego</span>
+      }
+    </button>
+  </div>
+
+</form>

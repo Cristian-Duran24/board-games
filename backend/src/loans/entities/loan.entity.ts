@@ -27,10 +27,18 @@ export class Loan {
   @Field(() => Date)
   endDate: Date;
 
-  // Estandarización: Inglés (active, returned, overdue)
-  @Column({ default: 'active' })
-  @Field(() => String)
+  @Column({ type: 'timestamp', nullable: true })
+  @Field(() => Date, { nullable: true })
+  actualReturnDate?: Date;
+
+  // Estandarización: Inglés (active, returned, overdue) via Enum
+  @Column({ default: 'active' }) // Se guarda como string en DB, compatible con Enum
+  @Field(() => String) 
   status: string; 
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Field(() => Float)
+  totalPrice: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   @Field(() => Float)

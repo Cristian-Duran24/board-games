@@ -15,9 +15,9 @@ export class Game {
   title: string;
 
   // Optimización: eager: false (por defecto) para no traer la categoría siempre
-  @ManyToOne(() => Category, (category) => category.games) 
-  @Field(() => Category)
-  category: Category;
+  @ManyToOne(() => Category, (category) => category.games, { nullable: true })
+  @Field(() => Category, { nullable: true })
+  category?: Category;
 
   @Column({ default: 1 })
   @Field(() => Int)
@@ -27,16 +27,28 @@ export class Game {
   @Field(() => Int)
   inStock: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   @Field(() => String, { nullable: true })
-  image: string;
+  image?: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   @Field(() => Float)
   price: number;
 
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  playersMin?: number;
+
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  playersMax?: number;
+
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  duration?: number;
+
   @OneToMany(() => Loan, (loan) => loan.game)
-  loans: Loan[]; 
+  loans: Loan[];
 
   @DeleteDateColumn()
   deletedAt?: Date;

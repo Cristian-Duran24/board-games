@@ -1,0 +1,5 @@
+<!-- Botón reutilizable con variantes filled/outlined/text y colores del Design System -->
+<button [class]="computedClasses()" [type]="type()" [attr.disabled]="disabled() ? '' : null"
+  (click)="onHostClick($event)">
+  <ng-content />
+</button>
