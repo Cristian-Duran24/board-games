@@ -16,16 +16,17 @@ export class ChipComponent {
   protected readonly computedClasses = computed(() => {
     const base = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border tracking-wide';
 
+    if (this.solid()) return `${base} bg-surface text-text-secondary border-border-default`;
+
     const transparentColors: Record<ChipColor, string> = {
-      blue:     'bg-chip-blue-bg     text-chip-blue     border-chip-blue-border',
-      green:    'bg-chip-green-bg    text-chip-green    border-chip-green-border',
-      red:      'bg-chip-red-bg      text-chip-red      border-chip-red-border',
-      yellow:   'bg-chip-yellow-bg   text-chip-yellow   border-chip-yellow-border',
-      indigo:   'bg-chip-indigo-bg   text-chip-indigo   border-chip-indigo-border',
-      disabled: 'bg-chip-disabled-bg text-chip-disabled border-chip-disabled-border',
+      blue:     'bg-chip-blue/10     text-chip-blue     border-chip-blue/25',
+      green:    'bg-chip-green/10    text-chip-green    border-chip-green/25',
+      red:      'bg-chip-red/10      text-chip-red      border-chip-red/25',
+      yellow:   'bg-chip-yellow/10   text-chip-yellow   border-chip-yellow/25',
+      indigo:   'bg-chip-indigo/10   text-chip-indigo   border-chip-indigo/25',
+      disabled: 'bg-chip-disabled/10 text-chip-disabled border-chip-disabled/25',
     };
 
-    if (this.solid()) return `${base} bg-black/60 text-white border-white/15`;
-    return `${base} ${transparentColors[this.color()]}`;
+    return `${base} ${transparentColors[this.color()] ?? transparentColors['blue']}`;
   });
 }

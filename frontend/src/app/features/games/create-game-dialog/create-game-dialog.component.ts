@@ -1,16 +1,5 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy} from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -36,17 +25,15 @@ export interface CreateGameDialogData {
   ],
   templateUrl: './create-game-dialog.component.html',
 })
-export class CreateGameDialogComponent implements OnInit {
 
+export class CreateGameDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<CreateGameDialogComponent>);
   readonly dialogData = inject<CreateGameDialogData>(MAT_DIALOG_DATA);
   private readonly gamesService = inject(GamesService);
   private readonly snackBar = inject(MatSnackBar);
-
   protected readonly iconClose = X;
   protected readonly iconImage = Image;
-
   protected readonly submitting = signal(false);
   protected readonly imagePreview = signal<string | null>(null);
   private imageBase64: string | undefined = undefined;

@@ -1,7 +1,3 @@
-/**
- * Interfaces TypeScript que replican exactamente los tipos del esquema GraphQL del backend
- * para la entidad Category.
- */
 
 export interface Category {
   id: number;

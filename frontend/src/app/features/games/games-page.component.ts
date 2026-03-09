@@ -1,33 +1,15 @@
-import {
-  Component,
-  OnInit,
-  DestroyRef,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LucideAngularModule, Search, Plus } from 'lucide-angular';
-
 import { GamesService } from './games.service';
 import { GameCardComponent } from '../../shared/components/game-card/game-card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import {
-  CreateGameDialogComponent,
-  type CreateGameDialogData,
-} from './create-game-dialog/create-game-dialog.component';
-import {
-  EditGameDialogComponent,
-  type EditGameDialogData,
-} from './edit-game-dialog/edit-game-dialog.component';
-import {
-  ConfirmDialogComponent,
-  type ConfirmDialogData,
-} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { CreateGameDialogComponent, type CreateGameDialogData } from './create-game-dialog/create-game-dialog.component';
+import { EditGameDialogComponent, type EditGameDialogData } from './edit-game-dialog/edit-game-dialog.component';
+import { ConfirmDialogComponent, type ConfirmDialogData } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import type { Game } from './interfaces/game.interface';
 
 @Component({
@@ -59,7 +41,7 @@ export class GamesPageComponent implements OnInit {
   protected readonly selectedCategoryId = signal<number | null>(null);
   protected readonly searchQuery = signal('');
 
-  /** Lista filtrada por categoría y búsqueda (case-insensitive) */
+  /** Lista filtrada por categoría y búsqueda */
   protected readonly filteredGames = computed<Game[]>(() => {
     const games = this.gamesService.games();
     const categoryId = this.selectedCategoryId();
@@ -103,10 +85,10 @@ export class GamesPageComponent implements OnInit {
     dialogRef.afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.gamesService.loadGames();
-      }
-    });
+        if (confirmed) {
+          this.gamesService.loadGames();
+        }
+      });
   }
 
   /** Abre el dialog de edición de juego */
