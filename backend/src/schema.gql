@@ -30,7 +30,7 @@ scalar DateTime
 type Game {
   id: Int!
   title: String!
-  category: Category!
+  category: Category
   inTotal: Int!
   inStock: Int!
   image: String

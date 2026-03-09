@@ -1,0 +1,66 @@
+<!-- Cabecera del dialog -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-border-subtle">
+  <h2 class="text-xl font-bold text-text-primary">Editar Préstamo</h2>
+  <button type="button"
+    class="text-text-muted hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-subtle/30"
+    (click)="onCancel()" aria-label="Cerrar">
+    <lucide-icon [img]="iconClose" class="w-5 h-5" />
+  </button>
+</div>
+
+<!-- Info no editable -->
+<div class="px-6 pt-5 flex flex-col gap-1">
+  <p class="text-xs text-text-muted uppercase tracking-wider font-semibold">Préstamo #{{ data.loan.id }}</p>
+  <p class="text-text-primary font-semibold">{{ data.loan.game.title }}
+    <span class="text-text-muted font-normal text-sm">— {{ data.loan.client.name }}</span>
+  </p>
+</div>
+
+<!-- Formulario -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="px-6 py-4 flex flex-col gap-4">
+
+    <!-- Fecha de inicio -->
+    <div>
+      <label class="form-label" for="el-start">Fecha de inicio *</label>
+      <input id="el-start" formControlName="startDate" type="date"
+        class="input-field" />
+      @if (form.get('startDate')?.errors?.['required'] && form.get('startDate')?.touched) {
+        <p class="text-danger text-xs mt-1">La fecha de inicio es obligatoria</p>
+      }
+    </div>
+
+    <!-- Fecha de devolución -->
+    <div>
+      <label class="form-label" for="el-end">Fecha de devolución *</label>
+      <input id="el-end" formControlName="endDate" type="date"
+        class="input-field" />
+      @if (form.get('endDate')?.errors?.['required'] && form.get('endDate')?.touched) {
+        <p class="text-danger text-xs mt-1">La fecha de devolución es obligatoria</p>
+      }
+    </div>
+
+  </div>
+
+  <!-- Pie del dialog -->
+  <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-subtle">
+    <button type="button"
+      class="px-5 py-2.5 rounded-xl text-sm font-medium text-text-secondary border border-border-default hover:bg-subtle/30 transition-colors cursor-pointer"
+      (click)="onCancel()" [disabled]="submitting()">
+      Cancelar
+    </button>
+    <button type="submit"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors cursor-pointer"
+      [class.bg-button-filled-primary]="!submitting()"
+      [class.bg-button-filled-primary/50]="submitting()"
+      [class.cursor-not-allowed]="submitting()"
+      [disabled]="form.invalid || submitting()">
+      @if (submitting()) {
+        <mat-spinner diameter="16" />
+        <span>Guardando...</span>
+      } @else {
+        <span>Guardar cambios</span>
+      }
+    </button>
+  </div>
+</form>
