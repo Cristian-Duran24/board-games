@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LucideAngularModule, Menu, ChevronDown } from 'lucide-angular';
 import { SidebarComponent } from '../layout/sidebar/sidebar.component';
@@ -12,4 +12,10 @@ import { SidebarComponent } from '../layout/sidebar/sidebar.component';
 export class LayoutShellComponent {
   protected readonly iconMenu = Menu;
   protected readonly iconChevronDown = ChevronDown;
+
+  protected readonly sidebarOpen = signal(true);
+
+  protected toggleSidebar(): void {
+    this.sidebarOpen.update(v => !v);
+  }
 }

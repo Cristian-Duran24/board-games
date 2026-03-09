@@ -24,7 +24,7 @@ export const routes: Routes = [
       {
         path: 'prestamos',
         loadComponent: () =>
-          import('./features/home/home-page.component').then(m => m.HomePageComponent),
+          import('./features/loans/loans-page.component').then(m => m.LoansPageComponent),
         title: '10Minds BoardGames - Préstamos',
       },
       {

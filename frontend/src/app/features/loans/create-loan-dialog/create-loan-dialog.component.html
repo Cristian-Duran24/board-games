@@ -1,0 +1,120 @@
+<!-- Cabecera del dialog -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-border-subtle">
+  <h2 class="text-xl font-bold text-text-primary">Nuevo Préstamo</h2>
+  <button type="button"
+    class="text-text-muted hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-subtle/30"
+    (click)="onCancel()" aria-label="Cerrar">
+    <lucide-icon [img]="iconClose" class="w-5 h-5" />
+  </button>
+</div>
+
+<!-- Formulario -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="px-6 py-5 flex flex-col gap-4">
+
+    <!-- Juego -->
+    <div>
+      <label class="form-label" for="l-game">Juego *</label>
+      @if (gamesService.loading()) {
+        <div class="input-field flex items-center gap-2 text-text-muted text-sm">
+          <mat-spinner diameter="14" />
+          Cargando juegos...
+        </div>
+      } @else {
+        <select id="l-game" formControlName="gameId" class="input-field">
+          <option [ngValue]="null" disabled>Selecciona un juego</option>
+          @for (game of availableGames(); track game.id) {
+            <option [ngValue]="game.id">
+              {{ game.title }} — Bs {{ game.price }}/día ({{ game.inStock }} disponibles)
+            </option>
+          }
+          @if (availableGames().length === 0) {
+            <option disabled>No hay juegos con stock disponible</option>
+          }
+        </select>
+      }
+      @if (form.get('gameId')?.errors?.['required'] && form.get('gameId')?.touched) {
+        <p class="text-danger text-xs mt-1">Debes seleccionar un juego</p>
+      }
+    </div>
+
+    <!-- Cliente -->
+    <div>
+      <label class="form-label" for="l-client">Cliente *</label>
+      @if (clientsService.loading()) {
+        <div class="input-field flex items-center gap-2 text-text-muted text-sm">
+          <mat-spinner diameter="14" />
+          Cargando clientes...
+        </div>
+      } @else {
+        <select id="l-client" formControlName="clientId" class="input-field">
+          <option [ngValue]="null" disabled>Selecciona un cliente</option>
+          @for (client of clientsService.clients(); track client.id) {
+            <option [ngValue]="client.id">{{ client.name }}</option>
+          }
+        </select>
+      }
+      @if (form.get('clientId')?.errors?.['required'] && form.get('clientId')?.touched) {
+        <p class="text-danger text-xs mt-1">Debes seleccionar un cliente</p>
+      }
+    </div>
+
+    <!-- Fecha de inicio -->
+    <div>
+      <label class="form-label" for="l-start">Fecha de inicio *</label>
+      <input id="l-start" formControlName="startDate" type="date"
+        class="input-field"
+        [min]="minStartDate" />
+      @if (form.get('startDate')?.errors?.['required'] && form.get('startDate')?.touched) {
+        <p class="text-danger text-xs mt-1">La fecha de inicio es obligatoria</p>
+      }
+    </div>
+
+    <!-- Fecha de devolución -->
+    <div>
+      <label class="form-label" for="l-end">Fecha de devolución *</label>
+      <input id="l-end" formControlName="endDate" type="date"
+        class="input-field"
+        [min]="minEndDate" />
+      @if (form.get('endDate')?.errors?.['required'] && form.get('endDate')?.touched) {
+        <p class="text-danger text-xs mt-1">La fecha de devolución es obligatoria</p>
+      }
+    </div>
+
+    <!-- Precio calculado (reactivo) -->
+    @if (calculatedPrice()) {
+      <div class="rounded-xl bg-primary/5 border border-primary/20 px-4 py-3 flex items-center justify-between">
+        <div>
+          <p class="text-xs text-text-secondary">Precio estimado</p>
+          <p class="text-text-primary text-sm font-medium">
+            {{ calculatedPrice()!.days }} {{ calculatedPrice()!.days === 1 ? 'día' : 'días' }}
+          </p>
+        </div>
+        <p class="text-lg font-bold text-primary">Bs {{ calculatedPrice()!.total.toFixed(2) }}</p>
+      </div>
+    }
+
+  </div>
+
+  <!-- Pie del dialog -->
+  <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-subtle">
+    <button type="button"
+      class="px-5 py-2.5 rounded-xl text-sm font-medium text-text-secondary border border-border-default hover:bg-subtle/30 transition-colors cursor-pointer"
+      (click)="onCancel()" [disabled]="submitting()">
+      Cancelar
+    </button>
+    <button type="submit"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors cursor-pointer"
+      [class.bg-button-filled-primary]="!submitting()"
+      [class.bg-button-filled-primary/50]="submitting()"
+      [class.cursor-not-allowed]="submitting()"
+      [disabled]="form.invalid || submitting()">
+      @if (submitting()) {
+        <mat-spinner diameter="16" />
+        <span>Creando...</span>
+      } @else {
+        <span>Crear préstamo</span>
+      }
+    </button>
+  </div>
+</form>
