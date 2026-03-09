@@ -22,7 +22,8 @@ export class Client {
   email?: string;
 
   @OneToMany(() => Loan, (loan) => loan.client)
-  loans: Loan[];
+  @Field(() => [Loan], { nullable: true })
+  loans?: Loan[];
 
   @DeleteDateColumn()
   deletedAt: Date;

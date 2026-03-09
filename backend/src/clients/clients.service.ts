@@ -26,14 +26,18 @@ export class ClientsService {
 
   async findAll(paginationArgs: PaginationArgs): Promise<Client[]> {
     const { limit, offset } = paginationArgs;
-    return await this.clientsRepository.find({ 
-      take: limit, 
-      skip: offset 
+    return await this.clientsRepository.find({
+      take: limit,
+      skip: offset,
+      relations: ['loans'],
     });
   }
 
   async findOne(id: number): Promise<Client> {
-    const client = await this.clientsRepository.findOneBy({ id });
+    const client = await this.clientsRepository.findOne({
+      where: { id },
+      relations: ['loans'],
+    });
     if (!client) throw new Error('Client not found');
     return client;
   }
